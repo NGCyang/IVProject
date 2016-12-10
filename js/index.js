@@ -2,14 +2,7 @@ var data = [
     {
         corp: ["Twitter  Inc."],
         id: "5775b29f3a8ffe29560a87b9",
-        time: {
-            year: 2016,
-            month: 7,
-            day: 1,
-            hour: 0,
-            minute: 0,
-            second: 16
-        },
+        time: new Date(2016, 7, 1, 0, 0, 16),
         topic: [
             {
                 group: "Legal Actions",
@@ -21,14 +14,7 @@ var data = [
     {
         corp: ["Microsoft Corporation"],
         id: "5775b29f3a8ffe29560a87ba",
-        time: {
-            year: 2016,
-            month: 7,
-            day: 1,
-            hour: 0,
-            minute: 0,
-            second: 22
-        },
+        time: new Date(2016, 7, 1, 0, 0, 22),
         topic: [
             {
                 group: "Financing Actions",
@@ -40,14 +26,7 @@ var data = [
     {
         corp: ["Noodles & Company"],
         id: "5775b32b3a8ffe29560a87bd",
-        time: {
-            year: 2016,
-            month: 7,
-            day: 1,
-            hour: 0,
-            minute: 2,
-            second: 40
-        },
+        time: new Date(2016, 7, 1, 0, 2, 40),
         topic: [
             {
                 group: "Criminal Actions",
@@ -60,8 +39,8 @@ var data = [
 
 var filter = {
     time: {
-        from: "",
-        to: ""
+        from: null,
+        to: null
     },
     websites: {},
     topics: {
@@ -170,7 +149,7 @@ var initial = function () {
                 if (event.target.checked) {
                     filter.topics[topics[event.target.getAttribute("index")].groupname] = {};
                     var values = topics[event.target.getAttribute("index")].value;
-                    for(var j = 0; j < values.length; j ++){
+                    for (var j = 0; j < values.length; j++) {
                         filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = 1;
                     }
                 } else {
@@ -182,7 +161,7 @@ var initial = function () {
                     if (filter.topics[topics[event.target.getAttribute("index")].groupname] &&
                         filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]]) {
                         typeInputs[j].checked = true;
-                    }else{
+                    } else {
                         typeInputs[j].checked = false;
                     }
                 }
@@ -215,12 +194,12 @@ var initial = function () {
                         delete filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]];
                     }
                     var groupInput = document.getElementById(topics[event.target.getAttribute("groupIndex")].groupname);
-                    if(Object.keys(filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]).length 
-                        == topics[event.target.getAttribute("groupIndex")].value.length){
-                            groupInput.checked = true;
-                        }else{
-                            groupInput.checked = false;
-                        }
+                    if (Object.keys(filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]).length
+                        == topics[event.target.getAttribute("groupIndex")].value.length) {
+                        groupInput.checked = true;
+                    } else {
+                        groupInput.checked = false;
+                    }
                 }
                 children.push(typeInput);
                 var typeLabel = document.createElement("label");
@@ -262,4 +241,14 @@ var initial = function () {
             var test = document.createElement("div");
             return div;
         });
+}
+
+var onTimeChange = function (event) {
+    var value = event.target.value;
+    var date = new Date(value);
+    if (event.target.id == "date_filter_input_from") {
+        filter.time.from = date;
+    } else if (event.target.id == "date_filter_input_to") {
+        filter.time.to = date;
+    }
 }
