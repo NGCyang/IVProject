@@ -288,13 +288,14 @@ var onTimeChange = function (event) {
 }
 
 var render = function () {
-    chartSVG.selectAll("g").data(data)
+    var rect = chartSVG.selectAll("rect").data(data)
         .enter().append("rect")
         .attr("x", chartMargin.left)
         .attr("y", function (v, i) {
-            return i * (80 + chartMargin.bottom) + chartMargin.top;
+            return i * (96 + chartMargin.bottom) + chartMargin.top;
         })
         .attr("width", chartWidth - chartMargin.left - chartMargin.right)
-        .attr("height", 80 - chartMargin.top - chartMargin.bottom)
+        .attr("height", 96 - chartMargin.top - chartMargin.bottom)
         .attr("fill", "#ffffff");
+    console.log(rect.selectAll("rect"));
 }
