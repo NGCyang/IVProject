@@ -58,6 +58,18 @@ var data = [
     }
 ];
 
+var filter = {
+    time: {
+        from: "",
+        to: ""
+    },
+    websites: {},
+    topics: {
+
+    },
+    corporations: {}
+}
+
 var websites = ["test.test"];
 var topics = [
     {
@@ -125,7 +137,14 @@ var initial = function () {
             var input = document.createElement("input");
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("id", "website_" + i);
+            input.setAttribute("id", v);
+            input.onchange = function (event) {
+                if (event.target.checked) {
+                    filter.websites[event.target.id] = 1;
+                } else {
+                    delete filter.websites[event.target.id];
+                }
+            }
             var label = document.createElement("label");
             label.innerText = v;
             label.setAttribute("for", input.getAttribute("id"));
@@ -145,7 +164,30 @@ var initial = function () {
             var input = document.createElement("input");
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("id", "topic_group_" + i);
+            input.setAttribute("id", v.groupname);
+            input.setAttribute("index", i)
+            input.onchange = function (event) {
+                if (event.target.checked) {
+                    filter.topics[topics[event.target.getAttribute("index")].groupname] = {};
+                    var values = topics[event.target.getAttribute("index")].value;
+                    for(var j = 0; j < values.length; j ++){
+                        filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = 1;
+                    }
+                } else {
+                    delete filter.topics[topics[event.target.getAttribute("index")].groupname];
+                }
+                var thisGroup = document.getElementById("div_group_" + topics[event.target.getAttribute("index")].groupname);
+                var typeInputs = thisGroup.getElementsByTagName("input");
+                for (var j = 0; j < typeInputs.length; j++) {
+                    if (filter.topics[topics[event.target.getAttribute("index")].groupname] &&
+                        filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]]) {
+                        typeInputs[j].checked = true;
+                    }else{
+                        typeInputs[j].checked = false;
+                    }
+                }
+            };
+            var children = [];
             var label = document.createElement("label");
             label.innerText = v.groupname;
             label.setAttribute("for", input.getAttribute("id"));
@@ -153,19 +195,42 @@ var initial = function () {
             div.appendChild(label);
 
             var typesDiv = document.createElement("div");
-            for (var i = 0; i < v.value.length; i++) {
+            typesDiv.id = "div_group_" + v.groupname;
+            for (var j = 0; j < v.value.length; j++) {
                 var typeDiv = document.createElement("div");
                 var typeInput = document.createElement("input");
                 typeInput.setAttribute("class", "filled-in");
                 typeInput.setAttribute("type", "checkbox");
-                typeInput.setAttribute("id", "topic_type_" + i);
+                typeInput.setAttribute("id", v.value[j]);
+                typeInput.setAttribute("groupIndex", i);
+                typeInput.setAttribute("typeIndex", j);
+                typeInput.onchange = function (event) {
+                    if (event.target.checked) {
+                        if (!filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]) {
+                            filter.topics[topics[event.target.getAttribute("groupIndex")].groupname] = {};
+                        }
+                        filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]]
+                            = 1;
+                    } else {
+                        delete filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]];
+                    }
+                    var groupInput = document.getElementById(topics[event.target.getAttribute("groupIndex")].groupname);
+                    if(Object.keys(filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]).length 
+                        == topics[event.target.getAttribute("groupIndex")].value.length){
+                            groupInput.checked = true;
+                        }else{
+                            groupInput.checked = false;
+                        }
+                }
+                children.push(typeInput);
                 var typeLabel = document.createElement("label");
-                typeLabel.innerText = v.value[i];
+                typeLabel.innerText = v.value[j];
                 typeLabel.setAttribute("for", typeInput.getAttribute("id"));
                 typeDiv.appendChild(typeInput);
                 typeDiv.appendChild(typeLabel);
                 typesDiv.appendChild(typeDiv);
             }
+            input.setAttribute("children", children);
             typesDiv.style.paddingLeft = "20px";
             div.appendChild(typesDiv);
             return div;
@@ -181,7 +246,14 @@ var initial = function () {
             var input = document.createElement("input");
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("id", "corp_" + i);
+            input.setAttribute("id", v);
+            input.onchange = function (event) {
+                if (event.target.checked) {
+                    filter.corporations[event.target.id] = 1;
+                } else {
+                    delete filter.corporations[event.target.id];
+                }
+            }
             var label = document.createElement("label");
             label.innerText = v;
             label.setAttribute("for", input.getAttribute("id"));

@@ -4,6 +4,7 @@ html, body{
     width: 100%;
     height: 100%;
     font-family: 'Arial';
+    overflow-y: hidden;
 }
 .top{
     width: 100%;
@@ -69,7 +70,7 @@ html, body{
 .title{
     font-size: 2em;
 }
-div{
+/*div{
     border: 1px solid #66ccff;
     box-sizing: border-box;
-}
+}*/
