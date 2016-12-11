@@ -1,19 +1,63 @@
 var data = [
     {
-        website: "radionowindy.com",
+        website: "411mania.com",
         articles: [
             {
-                corp: ["Twitter  Inc."],
-                id: "5775b29f3a8ffe29560a87b9",
-                time: new Date(2016, 7, 1, 0, 0, 16),
+                corp: ["Apple Inc."],
+                id: "5776a1103a8ffe29560aa054",
+                time: new Date("2016-07-01 16:57:38 UTC"),
                 topic: [
                     {
-                        group: "Legal Actions",
-                        type: "Allegation"
+                        group: "Rumors",
+                        type: "Speculation"
+                    },
+                    {
+                        group: "Financing Actions",
+                        type: "Financial Purchase"
                     }
                 ],
                 firstMention: false
-            }
+            },
+            {
+                corp: ["Starz"],
+                id: "5776a6643a8ffe29560aa15a",
+                time: new Date("2016-07-01 17:20:19 UTC"),
+                topic: [
+                    {
+                        group: "Mergers and Acquisitions",
+                        type: "Acquisition"
+                    }
+                ],
+                firstMention: false
+            },
+            {
+                corp: ["Pearson  Plc"],
+                id: "5776c29d3a8ffe29560aa72a",
+                time: new Date("2016-07-01 19:20:44 UTC"),
+                topic: [
+                    {
+                        group: "Product Development",
+                        type: "Product Launch"
+                    },
+                    {
+                        group: "Business Concerns",
+                        type: "Disagreements"
+                    }
+                ],
+                firstMention: false
+            },
+            {
+                corp: ["Twitter  Inc."],
+                id: "577ec7943a8ffe29560b8663",
+                time: new Date("2016-07-07 21:20:18 UTC"),
+                topic: [
+                    {
+                        group: "Company Earnings",
+                        type: "Financial Ratings"
+                    }
+                ],
+                firstMention: false
+            },
         ]
     },
     {
@@ -77,20 +121,33 @@ var websiteCard;
 var chart;
 var chartWidth = 0, chartHeight = 0;
 var chartMargin = {
-    left: 5,
-    right: 5,
+    left: 10,
+    right: 10,
     top: 5,
     bottom: 5
+};
+var itemSize = {
+    width: 5,
+    height: 5
+};
+
+var getCSV = function (path) {
+    var tempData = [];
+    d3.csv(path, function (error, result) {
+        console.log(error);
+    });
+    console.log(tempData);
+    return tempData;
 }
 
 var initial = function () {
+    getCSV("./backtest_students_sample.csv");
     console.log("page loaded!");
-    chartSVG = d3.select("#svg-chart");
+    chart = d3.select("#chart");
     websiteCard = document.getElementById("websiteCard");
 
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
-    chartSVG.attr('width', chartWidth).attr('height', chartHeight);
 
     $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
@@ -288,14 +345,34 @@ var onTimeChange = function (event) {
 }
 
 var render = function () {
-    var rect = chartSVG.selectAll("rect").data(data)
-        .enter().append("rect")
-        .attr("x", chartMargin.left)
-        .attr("y", function (v, i) {
-            return i * (96 + chartMargin.bottom) + chartMargin.top;
+    var colorScale = d3.scale.category20();
+    var xScale = d3.scale.linear().range(0, chartWidth - chartMargin.left - chartMargin.right);
+    var websiteRects = chart.selectAll("div.websiteRect").data(data)
+        .enter()
+        .append("div")
+        .attr("class", "websiteRect")
+        .style("left", chartMargin.left + "px")
+        .style("top", function (v, i) {
+            return i * (96 + chartMargin.bottom) + chartMargin.top + "px";
         })
-        .attr("width", chartWidth - chartMargin.left - chartMargin.right)
-        .attr("height", 96 - chartMargin.top - chartMargin.bottom)
-        .attr("fill", "#ffffff");
-    console.log(rect.selectAll("rect"));
+        .style("width", chartWidth - chartMargin.left - chartMargin.right + "px")
+        .style("height", 96 - chartMargin.top - chartMargin.bottom + "px")
+        .selectAll("div.ariticleRect").data(function (v, i) {
+            return v.articles;
+        })
+        .enter()
+        .append("div")
+        .attr("class", "articleRect")
+        .style("left", function (v, i) {
+            return i * itemSize.width + 2 + "px";
+        })
+        .style("top", function (v, i) {
+            return "0px";
+        })
+        .style("width", itemSize.width + "px")
+        .style("height", itemSize.height + "px")
+        .style("background-color", function (v, i) {
+            return colorScale(v.id);
+        })
+
 }
