@@ -1,39 +1,54 @@
 var data = [
     {
-        corp: ["Twitter  Inc."],
-        id: "5775b29f3a8ffe29560a87b9",
-        time: new Date(2016, 7, 1, 0, 0, 16),
-        topic: [
+        website: "radionowindy.com",
+        articles: [
             {
-                group: "Legal Actions",
-                type: "Allegation"
+                corp: ["Twitter  Inc."],
+                id: "5775b29f3a8ffe29560a87b9",
+                time: new Date(2016, 7, 1, 0, 0, 16),
+                topic: [
+                    {
+                        group: "Legal Actions",
+                        type: "Allegation"
+                    }
+                ],
+                firstMention: false
             }
-        ],
-        website: "radionowindy.com"
+        ]
     },
     {
-        corp: ["Microsoft Corporation"],
-        id: "5775b29f3a8ffe29560a87ba",
-        time: new Date(2016, 7, 1, 0, 0, 22),
-        topic: [
+        website: "www.thefinancialexpress-bd.com",
+        articles: [
             {
-                group: "Financing Actions",
-                type: "Financial Risk"
+                corp: ["Microsoft Corporation"],
+                id: "5775b29f3a8ffe29560a87ba",
+                time: new Date(2016, 7, 1, 0, 0, 22),
+                topic: [
+                    {
+                        group: "Financing Actions",
+                        type: "Financial Risk"
+                    }
+                ],
+                firstMention: false
             }
-        ],
-        website: "www.thefinancialexpress-bd.com"
+        ]
     },
     {
-        corp: ["Noodles & Company"],
-        id: "5775b32b3a8ffe29560a87bd",
-        time: new Date(2016, 7, 1, 0, 2, 40),
-        topic: [
+        website: "patch.com",
+        articles: [
             {
-                group: "Criminal Actions",
-                type: "Breach"
+                corp: ["Noodles & Company"],
+                id: "5775b32b3a8ffe29560a87bd",
+                time: new Date(2016, 7, 1, 0, 2, 40),
+                topic: [
+                    {
+                        group: "Criminal Actions",
+                        type: "Breach"
+                    }
+                ],
+                firstMention: false
             }
-        ],
-        website: "patch.com"
+        ]
     }
 ];
 
@@ -44,7 +59,6 @@ var filter = {
     },
     websites: {},
     topics: {
-
     },
     corporations: {}
 }
@@ -60,9 +74,24 @@ var corps = ["TEST INC."];
 
 var websiteCard;
 
+var chart;
+var chartWidth = 0, chartHeight = 0;
+var chartMargin = {
+    left: 5,
+    right: 5,
+    top: 5,
+    bottom: 5
+}
+
 var initial = function () {
     console.log("page loaded!");
+    chartSVG = d3.select("#svg-chart");
     websiteCard = document.getElementById("websiteCard");
+
+    chartWidth = document.getElementById("chart").clientWidth;
+    chartHeight = document.getElementById("chart").clientHeight;
+    chartSVG.attr('width', chartWidth).attr('height', chartHeight);
+
     $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 15 // Creates a dropdown of 15 years to control year
@@ -73,17 +102,21 @@ var initial = function () {
     var topicObjects = {};
     var corpObjects = {};
     for (var i = 0; i < data.length; i++) {
-        websiteObjects[data[i].website] = null;
-
-        for (var j = 0; j < data[i].topic.length; j++) {
-            if (!topicObjects[data[i].topic[j].group])
-                topicObjects[data[i].topic[j].group] = {};
-            topicObjects[data[i].topic[j].group][data[i].topic[j].type] = null;
+        websiteObjects[data[i].website] = 1;
+        for (var j = 0; j < data[i].articles.length; j++) {
+            var article = data[i].articles[j];
+            for (var k = 0; k < article.topic.length; k++) {
+                if (!topicObjects[article.topic[k].group])
+                    topicObjects[article.topic[k].group] = {};
+                topicObjects[article.topic[k].group][article.topic[k].type] = 1;
+            }
+            for (var k = 0; k < article.corp.length; k++) {
+                corpObjects[article.corp[k]] = 1;
+            }
         }
 
-        for (var j = 0; j < data[i].corp.length; j++) {
-            corpObjects[data[i].corp[j]] = null;
-        }
+
+
 
     }
     // initialize websites type array
@@ -241,6 +274,7 @@ var initial = function () {
             var test = document.createElement("div");
             return div;
         });
+    render();
 }
 
 var onTimeChange = function (event) {
@@ -251,4 +285,17 @@ var onTimeChange = function (event) {
     } else if (event.target.id == "date_filter_input_to") {
         filter.time.to = date;
     }
+}
+
+var render = function () {
+    var rect = chartSVG.selectAll("rect").data(data)
+        .enter().append("rect")
+        .attr("x", chartMargin.left)
+        .attr("y", function (v, i) {
+            return i * (96 + chartMargin.bottom) + chartMargin.top;
+        })
+        .attr("width", chartWidth - chartMargin.left - chartMargin.right)
+        .attr("height", 96 - chartMargin.top - chartMargin.bottom)
+        .attr("fill", "#ffffff");
+    console.log(rect.selectAll("rect"));
 }
