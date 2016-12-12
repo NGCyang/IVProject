@@ -1,120 +1,111 @@
-var data = [
-    {
-        website: "411mania.com",
-        articles: [
-            {
-                corp: ["Apple Inc."],
-                id: "5776a1103a8ffe29560aa054",
-                time: new Date("2016-07-01 16:57:38 UTC"),
-                topic: [
-                    {
-                        group: "Rumors",
-                        type: "Speculation"
-                    },
-                    {
-                        group: "Financing Actions",
-                        type: "Financial Purchase"
-                    }
-                ],
-                firstMention: false
-            },
-            {
-                corp: ["Starz"],
-                id: "5776a6643a8ffe29560aa15a",
-                time: new Date("2016-07-01 17:20:19 UTC"),
-                topic: [
-                    {
-                        group: "Mergers and Acquisitions",
-                        type: "Acquisition"
-                    }
-                ],
-                firstMention: false
-            },
-            {
-                corp: ["Pearson  Plc"],
-                id: "5776c29d3a8ffe29560aa72a",
-                time: new Date("2016-07-01 19:20:44 UTC"),
-                topic: [
-                    {
-                        group: "Product Development",
-                        type: "Product Launch"
-                    },
-                    {
-                        group: "Business Concerns",
-                        type: "Disagreements"
-                    }
-                ],
-                firstMention: false
-            },
-            {
-                corp: ["Twitter  Inc."],
-                id: "577ec7943a8ffe29560b8663",
-                time: new Date("2016-07-07 21:20:18 UTC"),
-                topic: [
-                    {
-                        group: "Company Earnings",
-                        type: "Financial Ratings"
-                    }
-                ],
-                firstMention: false
-            },
-        ]
-    },
-    {
-        website: "www.thefinancialexpress-bd.com",
-        articles: [
-            {
-                corp: ["Microsoft Corporation"],
-                id: "5775b29f3a8ffe29560a87ba",
-                time: new Date(2016, 7, 1, 0, 0, 22),
-                topic: [
-                    {
-                        group: "Financing Actions",
-                        type: "Financial Risk"
-                    }
-                ],
-                firstMention: false
-            }
-        ]
-    },
-    {
-        website: "patch.com",
-        articles: [
-            {
-                corp: ["Noodles & Company"],
-                id: "5775b32b3a8ffe29560a87bd",
-                time: new Date(2016, 7, 1, 0, 2, 40),
-                topic: [
-                    {
-                        group: "Criminal Actions",
-                        type: "Breach"
-                    }
-                ],
-                firstMention: false
-            }
-        ]
-    }
-];
+var data = {
+    "411mania.com": [
+        {
+            corp: ["Apple Inc."],
+            id: "5776a1103a8ffe29560aa054",
+            time: new Date("2016-07-01 16:57:38 UTC"),
+            topic: [
+                {
+                    group: "Rumors",
+                    type: "Speculation"
+                },
+                {
+                    group: "Financing Actions",
+                    type: "Financial Purchase"
+                }
+            ],
+            firstMention: false
+        },
+        {
+            corp: ["Starz"],
+            id: "5776a6643a8ffe29560aa15a",
+            time: new Date("2016-07-01 17:20:19 UTC"),
+            topic: [
+                {
+                    group: "Mergers and Acquisitions",
+                    type: "Acquisition"
+                }
+            ],
+            firstMention: false
+        },
+        {
+            corp: ["Pearson  Plc"],
+            id: "5776c29d3a8ffe29560aa72a",
+            time: new Date("2016-07-01 19:20:44 UTC"),
+            topic: [
+                {
+                    group: "Product Development",
+                    type: "Product Launch"
+                },
+                {
+                    group: "Business Concerns",
+                    type: "Disagreements"
+                }
+            ],
+            firstMention: false
+        },
+        {
+            corp: ["Twitter  Inc."],
+            id: "577ec7943a8ffe29560b8663",
+            time: new Date("2016-07-07 21:20:18 UTC"),
+            topic: [
+                {
+                    group: "Company Earnings",
+                    type: "Financial Ratings"
+                }
+            ],
+            firstMention: false
+        },
+    ],
+    "www.thefinancialexpress-bd.com": [
+        {
+            corp: ["Microsoft Corporation"],
+            id: "5775b29f3a8ffe29560a87ba",
+            time: new Date(2016, 7, 1, 0, 0, 22),
+            topic: [
+                {
+                    group: "Financing Actions",
+                    type: "Financial Risk"
+                }
+            ],
+            firstMention: false
+        }
+    ],
+
+    "patch.com": [
+        {
+            corp: ["Noodles & Company"],
+            id: "5775b32b3a8ffe29560a87bd",
+            time: new Date(2016, 7, 1, 0, 2, 40),
+            topic: [
+                {
+                    group: "Criminal Actions",
+                    type: "Breach"
+                }
+            ],
+            firstMention: false
+        }
+    ]
+};
 
 var filter = {
     time: {
         from: null,
         to: null
     },
-    websites: {},
+    websites: [],
     topics: {
     },
     corporations: {}
 }
 
-var websites = ["test.test"];
+var websites = [];
 var topics = [
-    {
-        groupname: "test",
-        value: ["type1", "type2"]
-    }
+    
 ];
-var corps = ["TEST INC."];
+var corps = [];
+var minTime = null;
+var maxTime = null;
 
 var websiteCard;
 
@@ -127,21 +118,13 @@ var chartMargin = {
     bottom: 5
 };
 var itemSize = {
-    width: 5,
-    height: 5
+    width: 10,
+    height: 8
 };
 
-var getCSV = function (path) {
-    var tempData = [];
-    d3.csv(path, function (error, result) {
-        console.log(error);
-    });
-    console.log(tempData);
-    return tempData;
-}
+var pageloaded = false;
 
 var initial = function () {
-    getCSV("./backtest_students_sample.csv");
     console.log("page loaded!");
     chart = d3.select("#chart");
     websiteCard = document.getElementById("websiteCard");
@@ -149,19 +132,12 @@ var initial = function () {
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
 
-    $('.datepicker').pickadate({
-        selectMonths: true, // Creates a dropdown to control month
-        selectYears: 15 // Creates a dropdown of 15 years to control year
-    });
-
     // analyse data
-    var websiteObjects = {};
     var topicObjects = {};
     var corpObjects = {};
-    for (var i = 0; i < data.length; i++) {
-        websiteObjects[data[i].website] = 1;
-        for (var j = 0; j < data[i].articles.length; j++) {
-            var article = data[i].articles[j];
+    for (var i in data) {
+        for (var j = 0; j < data[i].length; j++) {
+            var article = data[i][j];
             for (var k = 0; k < article.topic.length; k++) {
                 if (!topicObjects[article.topic[k].group])
                     topicObjects[article.topic[k].group] = {};
@@ -170,16 +146,15 @@ var initial = function () {
             for (var k = 0; k < article.corp.length; k++) {
                 corpObjects[article.corp[k]] = 1;
             }
+            if (minTime == null) minTime = article.time;
+            else if (minTime > article.time) minTime = article.time;
+            if (maxTime == null) maxTime = article.time;
+            else if (maxTime < article.time) maxTime = article.time;
         }
-
-
-
-
+        // initialize websites type array
+        websites.push(i);
     }
-    // initialize websites type array
-    for (var name in websiteObjects) {
-        websites.push(name);
-    }
+
     // initialize topic type array
     for (var name in topicObjects) {
         var topicTypes = [];
@@ -209,10 +184,11 @@ var initial = function () {
             input.setAttribute("id", v);
             input.onchange = function (event) {
                 if (event.target.checked) {
-                    filter.websites[event.target.id] = 1;
+                    filter.websites.push(event.target.id);
                 } else {
-                    delete filter.websites[event.target.id];
+                    filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
                 }
+                if(pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -220,6 +196,7 @@ var initial = function () {
             div.appendChild(input);
             div.appendChild(label);
             var test = document.createElement("div");
+            input.click();
             return div;
         });
 
@@ -234,7 +211,7 @@ var initial = function () {
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
             input.setAttribute("id", v.groupname);
-            input.setAttribute("index", i)
+            input.setAttribute("index", i);
             input.onchange = function (event) {
                 if (event.target.checked) {
                     filter.topics[topics[event.target.getAttribute("index")].groupname] = {};
@@ -255,8 +232,8 @@ var initial = function () {
                         typeInputs[j].checked = false;
                     }
                 }
+                if(pageloaded) render();
             };
-            var children = [];
             var label = document.createElement("label");
             label.innerText = v.groupname;
             label.setAttribute("for", input.getAttribute("id"));
@@ -290,8 +267,8 @@ var initial = function () {
                     } else {
                         groupInput.checked = false;
                     }
+                    if(pageloaded) render();
                 }
-                children.push(typeInput);
                 var typeLabel = document.createElement("label");
                 typeLabel.innerText = v.value[j];
                 typeLabel.setAttribute("for", typeInput.getAttribute("id"));
@@ -299,7 +276,6 @@ var initial = function () {
                 typeDiv.appendChild(typeLabel);
                 typesDiv.appendChild(typeDiv);
             }
-            input.setAttribute("children", children);
             typesDiv.style.paddingLeft = "20px";
             div.appendChild(typesDiv);
             return div;
@@ -322,6 +298,7 @@ var initial = function () {
                 } else {
                     delete filter.corporations[event.target.id];
                 }
+                if(pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -329,9 +306,29 @@ var initial = function () {
             div.appendChild(input);
             div.appendChild(label);
             var test = document.createElement("div");
+            input.click();
             return div;
         });
+    for (var i = 0; i < topics.length; i++) {
+        document.getElementById(topics[i].groupname).click();
+    }
+
+    // initial time
+    document.getElementById("date_filter_input_from").value = toDateString(minTime);
+    document.getElementById("date_filter_input_to").value = toDateString(maxTime);
+    filter.time.from = new Date(toDateString(minTime));
+    filter.time.to = new Date(toDateString(maxTime));
+    // console.log(filter);
+    pageloaded = true;
     render();
+}
+var toDateString = function (date) {
+    var year = date.getUTCFullYear();
+    var month = date.getUTCMonth() + 1;
+    var day = date.getUTCDate();
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+    return year + "-" + month + "-" + day;
 }
 
 var onTimeChange = function (event) {
@@ -346,33 +343,50 @@ var onTimeChange = function (event) {
 
 var render = function () {
     var colorScale = d3.scale.category20();
-    var xScale = d3.scale.linear().range(0, chartWidth - chartMargin.left - chartMargin.right);
-    var websiteRects = chart.selectAll("div.websiteRect").data(data)
-        .enter()
-        .append("div")
-        .attr("class", "websiteRect")
-        .style("left", chartMargin.left + "px")
-        .style("top", function (v, i) {
-            return i * (96 + chartMargin.bottom) + chartMargin.top + "px";
-        })
-        .style("width", chartWidth - chartMargin.left - chartMargin.right + "px")
-        .style("height", 96 - chartMargin.top - chartMargin.bottom + "px")
-        .selectAll("div.ariticleRect").data(function (v, i) {
-            return v.articles;
-        })
-        .enter()
-        .append("div")
-        .attr("class", "articleRect")
-        .style("left", function (v, i) {
-            return i * itemSize.width + 2 + "px";
-        })
-        .style("top", function (v, i) {
-            return "0px";
-        })
-        .style("width", itemSize.width + "px")
-        .style("height", itemSize.height + "px")
-        .style("background-color", function (v, i) {
-            return colorScale(v.id);
-        })
+    var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
+    xScale.ticks(d3.time.day.utc, 1);
+    xScale.domain([filter.time.from, filter.time.to]);
+    console.log(filter);
+    // console.log(xScale(new Date("Jul 06 2016 00:57:38 GMT+0800")));
+    var yScale = d3.time.scale().range([164 - chartMargin.top - chartMargin.bottom - 10, 0]);
+    yScale.ticks(d3.time.hours, 4);
+    yScale.domain([0, 23]);
+    // console.log(yScale(23));
 
+    var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
+    websiteDivs.enter()
+        .append("div")
+            .attr("class", "websiteRect")
+            .style("left", chartMargin.left + "px")
+            .style("top", function (v, i) {
+                return i * (164 + chartMargin.bottom) + chartMargin.top + "px";
+            })
+            .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
+            .style("height", 164 - chartMargin.top - chartMargin.bottom + "px")
+            .append("svg")
+                .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
+                .attr("height", 164 - chartMargin.top - chartMargin.bottom - 10);
+    websiteDivs.exit().remove();
+    var websiteItems = document.getElementsByClassName("websiteRect");
+    for(var i = 0; i < websiteItems.length; i ++){
+        var websiteSVG = d3.select(websiteItems[i]).select("svg");
+        
+        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]])
+        articleRects.enter()
+            .append("rect")
+                .attr("x", function(v, i){
+                    return xScale(new Date(toDateString(v.time)));
+                })
+                .attr("y", function(v, i){
+                    var result = yScale(v.time.getUTCHours());
+                    console.log(result);
+                    return result;
+                })
+                .attr("width", itemSize.width)
+                .attr("height", itemSize.height)
+                .attr("fill", function(v, i){
+                    return colorScale(v.id);
+                })
+        articleRects.exit().remove();
+    }
 }
