@@ -183,6 +183,7 @@ var initial = function () {
             input.setAttribute("type", "checkbox");
             input.setAttribute("id", v);
             input.onchange = function (event) {
+                console.log(event.target.checked);
                 if (event.target.checked) {
                     filter.websites.push(event.target.id);
                 } else {
@@ -196,7 +197,6 @@ var initial = function () {
             div.appendChild(input);
             div.appendChild(label);
             var test = document.createElement("div");
-            input.click();
             return div;
         });
 
@@ -306,11 +306,16 @@ var initial = function () {
             div.appendChild(input);
             div.appendChild(label);
             var test = document.createElement("div");
-            input.click();
             return div;
         });
+    for(var i = 0; i < websites.length; i ++){
+        document.getElementById(websites[i]).click();
+    }
     for (var i = 0; i < topics.length; i++) {
         document.getElementById(topics[i].groupname).click();
+    }
+    for(var i = 0; i < corps.length; i ++){
+        document.getElementById(corps[i]).click();
     }
 
     // initial time
