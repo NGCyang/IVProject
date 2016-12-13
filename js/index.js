@@ -101,7 +101,7 @@ var filter = {
 
 var websites = [];
 var topics = [
-    
+
 ];
 var corps = [];
 var minTime = null;
@@ -118,8 +118,8 @@ var chartMargin = {
     bottom: 5
 };
 var itemSize = {
-    width: 10,
-    height: 8
+    width: 20,
+    height: 20
 };
 
 var pageloaded = false;
@@ -131,20 +131,21 @@ var initial = function () {
 
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
-
     // analyse data
+    var websiteObjects = {}
     var topicObjects = {};
     var corpObjects = {};
     for (var i in data) {
+        websiteObjects[i] = null;
         for (var j = 0; j < data[i].length; j++) {
             var article = data[i][j];
             for (var k = 0; k < article.topic.length; k++) {
                 if (!topicObjects[article.topic[k].group])
                     topicObjects[article.topic[k].group] = {};
-                topicObjects[article.topic[k].group][article.topic[k].type] = 1;
+                topicObjects[article.topic[k].group][article.topic[k].type] = null;
             }
             for (var k = 0; k < article.corp.length; k++) {
-                corpObjects[article.corp[k]] = 1;
+                corpObjects[article.corp[k]] = null;
             }
             if (minTime == null) minTime = article.time;
             else if (minTime > article.time) minTime = article.time;
@@ -188,7 +189,7 @@ var initial = function () {
                 } else {
                     filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
                 }
-                if(pageloaded) render();
+                if (pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -216,7 +217,7 @@ var initial = function () {
                     filter.topics[topics[event.target.getAttribute("index")].groupname] = {};
                     var values = topics[event.target.getAttribute("index")].value;
                     for (var j = 0; j < values.length; j++) {
-                        filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = 1;
+                        filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = null;
                     }
                 } else {
                     delete filter.topics[topics[event.target.getAttribute("index")].groupname];
@@ -224,14 +225,14 @@ var initial = function () {
                 var thisGroup = document.getElementById("div_group_" + topics[event.target.getAttribute("index")].groupname);
                 var typeInputs = thisGroup.getElementsByTagName("input");
                 for (var j = 0; j < typeInputs.length; j++) {
-                    if (filter.topics[topics[event.target.getAttribute("index")].groupname] &&
-                        filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]]) {
+                    if (filter.topics[topics[event.target.getAttribute("index")].groupname] !== undefined &&
+                        filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]] !== undefined) {
                         typeInputs[j].checked = true;
                     } else {
                         typeInputs[j].checked = false;
                     }
                 }
-                if(pageloaded) render();
+                if (pageloaded) render();
             };
             var label = document.createElement("label");
             label.innerText = v.groupname;
@@ -266,7 +267,7 @@ var initial = function () {
                     } else {
                         groupInput.checked = false;
                     }
-                    if(pageloaded) render();
+                    if (pageloaded) render();
                 }
                 var typeLabel = document.createElement("label");
                 typeLabel.innerText = v.value[j];
@@ -275,7 +276,7 @@ var initial = function () {
                 typeDiv.appendChild(typeLabel);
                 typesDiv.appendChild(typeDiv);
             }
-            typesDiv.style.paddingLeft = "20px";
+            typesDiv.style.paddingLeft = "25px";
             div.appendChild(typesDiv);
             return div;
         });
@@ -297,7 +298,7 @@ var initial = function () {
                 } else {
                     delete filter.corporations[event.target.id];
                 }
-                if(pageloaded) render();
+                if (pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -307,13 +308,13 @@ var initial = function () {
             var test = document.createElement("div");
             return div;
         });
-    for(var i = 0; i < websites.length; i ++){
+    for (var i = 0; i < websites.length; i++) {
         document.getElementById(websites[i]).click();
     }
     for (var i = 0; i < topics.length; i++) {
         document.getElementById(topics[i].groupname).click();
     }
-    for(var i = 0; i < corps.length; i ++){
+    for (var i = 0; i < corps.length; i++) {
         document.getElementById(corps[i]).click();
     }
 
@@ -322,6 +323,18 @@ var initial = function () {
     document.getElementById("date_filter_input_to").value = toDateString(maxTime);
     filter.time.from = new Date(toDateString(minTime));
     filter.time.to = new Date(toDateString(new Date(maxTime.getTime() + 24 * 60 * 60 * 1000)));
+
+    // initial autocomplete
+    $("input#autocomplete-text-website").autocomplete({
+        data: websiteObjects
+    });
+    $("input#autocomplete-text-topic").autocomplete({
+        data: topicObjects
+    });
+    $("input#autocomplete-text-corp").autocomplete({
+        data: corpObjects
+    });
+
     // console.log(filter);
     pageloaded = true;
     render();
@@ -346,65 +359,103 @@ var onTimeChange = function (event) {
     render();
 }
 
+var onMouseEnter = function (item) {
+    var floatInfo = document.getElementById("float_info");
+    var wrapper = document.createElement("div");
+    for (var i = 0; i < item.topic.length; i++) {
+        var group = document.createElement("div");
+        group.innerHTML = "Topic Group" + (i + 1) + ": " + item.topic[i].group;
+        var type = document.createElement("div");
+        type.innerHTML = "Topic Type" + (i + 1) + ": " + item.topic[i].type;
+        wrapper.appendChild(group);
+        wrapper.appendChild(type);
+    }
+    for (var i = 0; i < item.corp.length; i++) {
+        var corp = document.createElement("div");
+        corp.innerHTML = "Corporation" + (i + 1) + ": " + item.corp[i];
+        wrapper.appendChild(corp);
+    }
+    var time = document.createElement("div");
+    time.innerHTML = "Time: " + item.time.toUTCString();
+    wrapper.appendChild(time);
+    floatInfo.replaceChild(wrapper, floatInfo.children[0]);
+}
+
 var render = function () {
     var colorScale = d3.scale.category20();
     var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
     xScale.domain([filter.time.from, filter.time.to]);
     console.log(filter);
-    // console.log(xScale(new Date("Jul 06 2016 00:57:38 GMT+0800")));
-    var yScale = d3.scale.linear().range([164 - chartMargin.top - chartMargin.bottom - 10, 0]);
-    yScale.domain([0, 23]);
-    // console.log(yScale(23));
+    var yScale = d3.scale.linear().range([chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10, 5]);
+    yScale.domain([0, 5]);
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
     websiteDivs.enter()
         .append("div")
-            .attr("class", "websiteRect")
-            .style("left", chartMargin.left + "px")
-            .style("top", function (v, i) {
-                return i * (164 + chartMargin.bottom) + chartMargin.top + "px";
-            })
-            .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
-            .style("height", 164 - chartMargin.top - chartMargin.bottom + "px")
-            .append("svg")
-                .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
-                .attr("height", 164 - chartMargin.top - chartMargin.bottom - 10);
+        .attr("class", "websiteRect")
+        .style("left", chartMargin.left + "px")
+        .style("top", function (v, i) {
+            return i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+        })
+        .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
+        .style("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px")
+        .append("svg")
+        .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
+        .attr("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
     websiteDivs.exit().remove();
     var websiteItems = document.getElementsByClassName("websiteRect");
-    for(var i = 0; i < websiteItems.length; i ++){
+    for (var i = 0; i < websiteItems.length; i++) {
         var websiteSVG = d3.select(websiteItems[i]).select("svg");
-        
-        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]].filter(function(item){
+
+        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]].filter(function (item) {
             // filter data
             var flag = true;
             // filter time
-            if(item.time > filter.time.to || item.time < filter.time.from) flag = false;
-            
+            if (item.time > filter.time.to || item.time < filter.time.from) flag = false;
+
             // filter topics
-            for(var i = 0; i < item.topic.length && flag; i ++){
-                if(!filter.topics[item.topic[i].group] || !filter.topics[item.topic[i].group][item.topic[i].type]) flag = false;
+            for (var i = 0; i < item.topic.length && flag; i++) {
+                if (filter.topics[item.topic[i].group] === undefined || filter.topics[item.topic[i].group][item.topic[i].type] === undefined) flag = false;
             }
             // filter corporations
-            for(var i = 0; i < item.corp.length && flag; i ++){
-                if(!filter.corporations[item.corp[i]]) flag = false;
+            for (var i = 0; i < item.corp.length && flag; i++) {
+                if (filter.corporations[item.corp[i]] === undefined) flag = false;
             }
-            if(!flag) console.log(item, flag, filter.time);
             return flag;
         }));
         articleRects.enter()
             .append("rect")
-                .attr("x", function(v, i){
-                    return xScale(new Date(toDateString(v.time)));
-                })
-                .attr("y", function(v, i){
-                    var result = yScale(v.time.getUTCHours());
-                    return result;
-                })
-                .attr("width", itemSize.width)
-                .attr("height", itemSize.height)
-                .attr("fill", function(v, i){
-                    return colorScale(v.id);
-                })
+            .attr("x", function (v, i) {
+                return xScale(new Date(toDateString(v.time)));
+            })
+            .attr("y", function (v, i) {
+                var result = yScale(Math.floor(v.time.getUTCHours() / 4));
+                return result;
+            })
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("width", itemSize.width)
+            .attr("height", itemSize.height)
+            .attr("fill", function (v, i) {
+                return colorScale(v.id);
+            })
+            .on("mouseenter", function (v, i) {
+                onMouseEnter(v);
+                d3.event.target.style.stroke = "#66ccff";
+                d3.select("#float_info").style({
+                    visibility: "visible",
+                    transform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    WebkitTransform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    opacity: 1
+                });
+            })
+            .on("mouseleave", function (v, i) {
+                d3.event.target.style.stroke = null;
+                d3.select("#float_info").style({
+                    visibility: "hidden",
+                    opacity: 0
+                });
+            });
         articleRects.exit().remove();
     }
 }
