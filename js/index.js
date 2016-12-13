@@ -183,7 +183,6 @@ var initial = function () {
             input.setAttribute("type", "checkbox");
             input.setAttribute("id", v);
             input.onchange = function (event) {
-                console.log(event.target.checked);
                 if (event.target.checked) {
                     filter.websites.push(event.target.id);
                 } else {
@@ -322,7 +321,7 @@ var initial = function () {
     document.getElementById("date_filter_input_from").value = toDateString(minTime);
     document.getElementById("date_filter_input_to").value = toDateString(maxTime);
     filter.time.from = new Date(toDateString(minTime));
-    filter.time.to = new Date(toDateString(maxTime));
+    filter.time.to = new Date(toDateString(new Date(maxTime.getTime() + 24 * 60 * 60 * 1000)));
     // console.log(filter);
     pageloaded = true;
     render();
@@ -344,17 +343,16 @@ var onTimeChange = function (event) {
     } else if (event.target.id == "date_filter_input_to") {
         filter.time.to = date;
     }
+    render();
 }
 
 var render = function () {
     var colorScale = d3.scale.category20();
     var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
-    xScale.ticks(d3.time.day.utc, 1);
     xScale.domain([filter.time.from, filter.time.to]);
     console.log(filter);
     // console.log(xScale(new Date("Jul 06 2016 00:57:38 GMT+0800")));
-    var yScale = d3.time.scale().range([164 - chartMargin.top - chartMargin.bottom - 10, 0]);
-    yScale.ticks(d3.time.hours, 4);
+    var yScale = d3.scale.linear().range([164 - chartMargin.top - chartMargin.bottom - 10, 0]);
     yScale.domain([0, 23]);
     // console.log(yScale(23));
 
@@ -376,7 +374,23 @@ var render = function () {
     for(var i = 0; i < websiteItems.length; i ++){
         var websiteSVG = d3.select(websiteItems[i]).select("svg");
         
-        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]])
+        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]].filter(function(item){
+            // filter data
+            var flag = true;
+            // filter time
+            if(item.time > filter.time.to || item.time < filter.time.from) flag = false;
+            
+            // filter topics
+            for(var i = 0; i < item.topic.length && flag; i ++){
+                if(!filter.topics[item.topic[i].group] || !filter.topics[item.topic[i].group][item.topic[i].type]) flag = false;
+            }
+            // filter corporations
+            for(var i = 0; i < item.corp.length && flag; i ++){
+                if(!filter.corporations[item.corp[i]]) flag = false;
+            }
+            if(!flag) console.log(item, flag, filter.time);
+            return flag;
+        }));
         articleRects.enter()
             .append("rect")
                 .attr("x", function(v, i){
@@ -384,7 +398,6 @@ var render = function () {
                 })
                 .attr("y", function(v, i){
                     var result = yScale(v.time.getUTCHours());
-                    console.log(result);
                     return result;
                 })
                 .attr("width", itemSize.width)
