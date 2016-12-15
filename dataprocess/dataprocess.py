@@ -66,7 +66,7 @@ article_url
 []
 """
 
-jsonfile = open('news.json', 'wb')
+jsonfile = open('news_sample.json', 'wb')
 
 '''
 data = []
@@ -111,18 +111,22 @@ for row in z['rows']:
     },
 '''
 
+dictbywebsite = {}
+
 with open('backtest_students_sample.csv') as csvfile:
-    count = 20
+    count = 50
+    #data = []
     for line in csvfile:
         count = count - 1
-        if count > 0:
+        if count > 1 and count < 49:
             row = line.split(',')
             corp = []
             if row[3] != "":
                 corp.append(row[3])
             if row[15] != "":
                 corp.append(row[15])
-            time = datetime.strptime("2016-01-01 00:04:43 UTC", "%Y-%m-%d %H:%M:%S %Z")
+            #print(row[2])
+            time = datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S %Z")
             topic = []
             if row[27] != "":
                 topic.append({'group':row[27], 'type':row[28]})
@@ -132,19 +136,42 @@ with open('backtest_students_sample.csv') as csvfile:
 
             if row[34] == "true":
                 first_mention = True;
+            else:
+                first_mention = False;
 
-            data = {
+            #
+            article_url = row[52]
+            urlsplit = article_url.split('/')
+            website = urlsplit[2]
+            print(website)
+            print('\n')
+
+            """
+            data.append({
                 'corp':corp,
                 'id':row[0],
                 'time':time,
                 'topic':topic,
-                'website':row[52],
-                'first_mention':row[34]
-            }
-            news_json = json.dumps(data, default=json_util.default)
-            jsonfile.write(news_json)
-            #json.dump(news_json, jsonfile)
-            jsonfile.write('\n')
+                #'website':website,
+                'first_mention':first_mention
+            })
+            """
+            article = {
+                'corp':corp,
+                'id':row[0],
+                'time':time,
+                'topic':topic,
+                'first_mention':first_mention
+                }
 
+            if website not in dictbywebsite:
+                dictbywebsite[website] = list()
+            
+            dictbywebsite[website].append(article)        
+            
+news_json = json.dumps(dictbywebsite, default=json_util.default)
+jsonfile.write(news_json)
+#json.dump(news_json, jsonfile)
+#jsonfile.write('\n')
 jsonfile.close()
 
