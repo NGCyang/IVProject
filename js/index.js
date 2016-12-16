@@ -1,3 +1,4 @@
+/*
 var data = {
     "411mania.com": [
         {
@@ -87,6 +88,15 @@ var data = {
         }
     ]
 };
+*/
+
+var data;
+d3.json("../dataprocess/news_sample.json", function(error, json) {
+  if (error) return console.warn(error);
+  data = json;
+  console.log("file loaded");
+});
+
 
 var filter = {
     time: {
