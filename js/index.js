@@ -1,6 +1,5 @@
 
 var data = null;
-<<<<<<< HEAD
 
 var load = function () {
     d3.json("../dataprocess/news_sample.json", function (error, json) {
@@ -10,14 +9,6 @@ var load = function () {
         initial();
     });
 }
-=======
-d3.json("../dataprocess/news_sample.json", function (error, json) {
-    if (error) return console.warn(error);
-    data = json;
-    console.log("file loaded");
-});
->>>>>>> parent of dbb3df0... asycn
-
 var filter = {
     time: {
         from: null,
