@@ -123,12 +123,9 @@ div.websiteRect{
     top: 15px;
     z-index: 10;
 }
-.svg-wrapper{
-    position: relative;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
+.item{
+    transition: background-color 0.3s;
+    background-color: #ffffff;
 }
 .clearframe{
     clear: both;
