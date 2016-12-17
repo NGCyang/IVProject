@@ -20,7 +20,7 @@ $RECYCLE.BIN/
 # Data Files
 *.csv
 node_modules/
-news.json
+dataprocess/news.json
 
 # =========================
 # Operating System Files
@@ -50,3 +50,4 @@ news.json
 Network Trash Folder
 Temporary Items
 .apdisk
+dataprocess/news.json

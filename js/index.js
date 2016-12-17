@@ -1,10 +1,22 @@
 
 var data = null;
+<<<<<<< HEAD
+
+var load = function () {
+    d3.json("../dataprocess/news_sample.json", function (error, json) {
+        if (error) return console.warn(error);
+        data = json;
+        console.log("file loaded");
+        initial();
+    });
+}
+=======
 d3.json("../dataprocess/news_sample.json", function (error, json) {
     if (error) return console.warn(error);
     data = json;
     console.log("file loaded");
 });
+>>>>>>> parent of dbb3df0... asycn
 
 var filter = {
     time: {
@@ -50,6 +62,9 @@ var initial = function () {
 
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
+
+    itemSize.height = (chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10) / 24;
+    itemSize.width = itemSize.height;
     // analyse data
     var websiteObjects = {}
     var topicObjects = {};
@@ -264,7 +279,7 @@ var initial = function () {
         if (target) {
             list.scrollTop = target.offsetTop - list.offsetTop;
             item.style.backgroundColor = "#009688";
-            setTimeout(function(){
+            setTimeout(function () {
                 item.style.backgroundColor = "#ffffff";
             }, 500)
         }
@@ -279,7 +294,7 @@ var initial = function () {
         if (target) {
             list.scrollTop = target.offsetTop - list.offsetTop;
             item.style.backgroundColor = "#009688";
-            setTimeout(function(){
+            setTimeout(function () {
                 item.style.backgroundColor = "#ffffff";
             }, 500)
         }
@@ -295,7 +310,7 @@ var initial = function () {
         if (target) {
             list.scrollTop = target.offsetTop - list.offsetTop;
             item.style.backgroundColor = "#009688";
-            setTimeout(function(){
+            setTimeout(function () {
                 item.style.backgroundColor = "#ffffff";
             }, 500)
         }
@@ -352,8 +367,8 @@ var render = function () {
     var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
     xScale.domain([filter.time.from, filter.time.to]);
     console.log(filter);
-    var yScale = d3.scale.linear().range([chartHeight / 6 - chartMargin.top - chartMargin.bottom - 10, 5]);
-    yScale.domain([0, 5]);
+    var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
+    yScale.domain([0, 23]);
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
     websiteDivs.enter()
@@ -361,9 +376,9 @@ var render = function () {
             var website = document.createElement("div");
             website.className = "websiteRect";
             website.style.left = chartMargin.left + "px";
-            website.style.top = i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+            website.style.top = i * (chartHeight / 3 + chartMargin.bottom) + chartMargin.top + "px";
             website.style.width = chartWidth - chartMargin.left - chartMargin.right - 10 + "px";
-            website.style.height = chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px";
+            website.style.height = chartHeight / 3 - chartMargin.top - chartMargin.bottom + "px";
             var name = document.createElement("div");
             name.className = "float-name";
             name.style.right = "10px";
@@ -421,7 +436,7 @@ var render = function () {
         // });
         .append("svg")
         .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
-        .attr("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
+        .attr("height", chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10);
     // chart.selectAll("div.websiteRect")
     //     .append("div")
     //     .attr("class", "float-name")
@@ -466,11 +481,11 @@ var render = function () {
                 return xScale(new Date(toDateString(new Date(v.time["$date"]))));
             })
             .attr("y", function (v, i) {
-                var result = yScale(Math.floor((new Date(v.time["$date"])).getUTCHours() / 4));
+                var result = yScale(Math.floor((new Date(v.time["$date"])).getUTCHours()));
                 return result;
             })
-            .attr("rx", 5)
-            .attr("ry", 5)
+            .attr("rx", 2)
+            .attr("ry", 2)
             .attr("width", itemSize.width)
             .attr("height", itemSize.height)
             .attr("fill", function (v, i) {

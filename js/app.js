@@ -7,7 +7,7 @@ var port = 3000;
 
 var app = express();
 var dataRouter;
-var url = 'mongodb://localhost:27017/dotabot';
+var url = 'mongodb://localhost:27017/news';
 var db;
 
 //-------Define Schemas-----//
@@ -58,21 +58,32 @@ db.once('open', function () {
     console.log("Connected correctly to MongoDB");
 });
 
-var collection = db.collection("dishes");
+var collection = db.collection("articles");
 //------set up router response-----//
 dataRouter = express.Router();
 dataRouter.use(bodyParser.json());
 
 dataRouter.route('/*.json')
 .get(function (req, res, next) {
-    res.json({"website": "http://www.sachem.ca/news-story/6215115-facebook-glitch-celebrates-46-years-of-online-friendship/\n", "first_mention": "false", "topic": [{"type": "Mistakes", "group": "Business Concerns"}], "corp": ["Facebook  Inc."], "time": {"$date": 1451606683000}, "id": "5685c18b3a8ffe55b90031c1"});
+    //res.json({"website": "http://www.sachem.ca/news-story/6215115-facebook-glitch-celebrates-46-years-of-online-friendship/\n", "first_mention": "false", "topic": [{"type": "Mistakes", "group": "Business Concerns"}], "corp": ["Facebook  Inc."], "time": {"$date": 1451606683000}, "id": "5685c18b3a8ffe55b90031c1"});
     
-    Articles.findOne({}, function (err, article) {
+    collection.findOne({}, function (err, article) {
         if (err) throw err;
         res.json(article);
     });
     
 });
+
+
+dataRouter.route('/all')
+.get(function (req, res, next) {
+    collection.distinct('website', function (err, items) {
+        if (err) throw err;
+        res.json(items);
+    });
+    
+});
+
 
 dataRouter.route('/:articleId')
 .get(function (req, res, next) {
