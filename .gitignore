@@ -19,6 +19,8 @@ $RECYCLE.BIN/
 
 # Data Files
 *.csv
+node_module/
+news.json
 
 # =========================
 # Operating System Files
