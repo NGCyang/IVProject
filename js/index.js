@@ -402,40 +402,93 @@ var render = function () {
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
     websiteDivs.enter()
-        .append("div")
-        .attr("class", "websiteRect")
-        .style("left", chartMargin.left + "px")
-        .style("top", function (v, i) {
-            return i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+        .append(function (v, i) {
+            var website = document.createElement("div");
+            website.className = "websiteRect";
+            website.style.left = chartMargin.left + "px";
+            website.style.top = i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+            website.style.width = chartWidth - chartMargin.left - chartMargin.right - 10 + "px";
+            website.style.height = chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px";
+            var name = document.createElement("div");
+            name.className = "float-name";
+            name.style.right = "10px";
+            name.addEventListener("mouseenter", function (event) {
+                var right = event.target.style.right;
+                var left = event.target.style.left;
+                if (right == "10px") {
+                    left = "10px";
+                    right = "";
+                } else if (left == "10px") {
+                    left = "";
+                    right = "10px";
+                }
+                event.target.style.right = right;
+                event.target.style.left = left;
+            });
+            name.innerText = v;
+            website.appendChild(name);
+            return website;
         })
-        .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
-        .style("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px")
+        // .append("div")
+        // .attr("class", "websiteRect")
+        // .style("left", chartMargin.left + "px")
+        // .style("top", function (v, i) {
+        //     return i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+        // })
+        // .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
+        // .style("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px")
+        // .append(function (v, i) {
+        //     var wrapper = document.createElement("div");
+        //     wrapper.className = "svg-wrapper";
+        //     var svg = document.createElement("svg");
+        //     svg.setAttribute("width", chartWidth - chartMargin.left - chartMargin.right - 10);
+        //     svg.setAttribute("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
+        //     wrapper.appendChild(svg);
+        //     var name = document.createElement("div");
+        //     name.className = "float-name";
+        //     name.style.right = "10px";
+        //     name.addEventListener("mouseenter", function (event) {
+        //         var right = event.target.style.right;
+        //         var left = event.target.style.left;
+        //         if (right == "10px") {
+        //             left = "10px";
+        //             right = "";
+        //         } else if (left == "10px") {
+        //             left = "";
+        //             right = "10px";
+        //         }
+        //         event.target.style.right = right;
+        //         event.target.style.left = left;
+        //     });
+        //     name.innerText = v;
+        //     wrapper.appendChild(name);
+        //     return wrapper;
+        // });
         .append("svg")
         .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
         .attr("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
-    chart.selectAll("div.websiteRect")
-        .append("div")
-        .attr("class", "float-name")
-        .style({ right: "10px" })
-        .on("mouseenter", function (v, i) {
-            var right = d3.event.target.style.right;
-            var left = d3.event.target.style.left;
-            if (right == "10px") {
-                left = "10px";
-                right = "";
-            } else if (left == "10px") {
-                left = "";
-                right = "10px";
-            }
-            d3.event.target.style.right = right;
-            d3.event.target.style.left = left;
-        })
-        .text((v) => { return v; });
+    // chart.selectAll("div.websiteRect")
+    //     .append("div")
+    //     .attr("class", "float-name")
+    //     .style({ right: "10px" })
+    //     .on("mouseenter", function (v, i) {
+    //         var right = d3.event.target.style.right;
+    //         var left = d3.event.target.style.left;
+    //         if (right == "10px") {
+    //             left = "10px";
+    //             right = "";
+    //         } else if (left == "10px") {
+    //             left = "";
+    //             right = "10px";
+    //         }
+    //         d3.event.target.style.right = right;
+    //         d3.event.target.style.left = left;
+    //     })
+    //     .text(function (v) { return v; });
     websiteDivs.exit().remove();
     var websiteItems = document.getElementsByClassName("websiteRect");
     for (var i = 0; i < websiteItems.length; i++) {
         var websiteSVG = d3.select(websiteItems[i]).select("svg");
-
         var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]].filter(function (item) {
             // filter data
             var flag = true;
