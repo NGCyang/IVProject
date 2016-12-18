@@ -18,7 +18,7 @@ function loadItems() {
       document.getElementById("data").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "all", true);
+  xhttp.open("GET", "/data/all/website", true);
   xhttp.send();
 }
 
@@ -29,7 +29,7 @@ function loadDoc() {
       document.getElementById("data").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "sample_news.json", true);
+  xhttp.open("GET", "/data/website/www.nasdaq.com", true);
   xhttp.send();
 }
 </script>
