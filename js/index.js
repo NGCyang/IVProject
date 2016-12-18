@@ -37,13 +37,14 @@ var itemSize = {
 var pageloaded = false;
 
 var load = function () {
-    d3.xhr("/data/all/website", function (error, result) {
+    d3.json("/data/all/website", function (error, result) {
         if (error) return console.warn(error);
+        console.log(result);
         for (var i = 0; i < result.length; i++) {
             websiteObjects[result[i]] = null;
             websites.push[result[i]];
         }
-        d3.xhr("/data/all/corp", function (error, result) {
+        d3.json("/data/all/corp", function (error, result) {
             if (error) return console.warn(error);
             for (var i = 0; i < result.length; i++) {
                 for (var j = 0; j < result[i].length; j++) {
@@ -53,7 +54,7 @@ var load = function () {
             for (var corp in corpObjects) {
                 corps.push(corp);
             }
-            d3.xhr("/data/all/topic", function (error, result) {
+            d3.json("/data/all/topic", function (error, result) {
                 if (error) return console.warn(error);
                 for (var i = 0; i < result.length; i++) {
                     for (var j = 0; j < result[i].length; j++) {
