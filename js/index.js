@@ -278,6 +278,10 @@ var initial = function () {
         document.getElementById(corps[i]).click();
     }
 
+    // debug
+    minTime = new Date("2016-01-01");
+    maxTime = new Date("2016-01-10");
+
     // initial time
     maxTime = new Date(maxTime.getTime() + 24 * 60 * 60 * 1000);
     document.getElementById("date_filter_input_from").value = toDateString(minTime);
