@@ -39,14 +39,15 @@ var load = function () {
     d3.json("/data/all/website", function (error, result) {
         if (error) return console.warn(error);
         websites = result;
-        console.log(websites);
-        // d3.json("../dataprocess/news_sample.json", function (error, json) {
-        //     if (error) return console.warn(error);
-        //     data = json;
-        //     console.log("file loaded");
-        //     initial();
-        // });
-    })
+        d3.json("/data/all/corp", function (error, result){
+            if(error) return console.warn(error);
+            console.log(result);
+            d3.json("/data/all/topic", function(error,result){
+                if(error) return console.warn(error);
+                console.log(result);
+            });
+        });
+    });
 
 }
 
