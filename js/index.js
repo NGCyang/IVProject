@@ -1,14 +1,4 @@
-
 var data = null;
-
-var load = function () {
-    d3.json("../dataprocess/news_sample.json", function (error, json) {
-        if (error) return console.warn(error);
-        data = json;
-        console.log("file loaded");
-        initial();
-    });
-}
 var filter = {
     time: {
         from: null,
@@ -45,6 +35,21 @@ var itemSize = {
 
 var pageloaded = false;
 
+var load = function () {
+    d3.json("/data/all/website", function (error, result) {
+        if (error) return console.warn(error);
+        websites = result;
+        console.log(websites);
+        // d3.json("../dataprocess/news_sample.json", function (error, json) {
+        //     if (error) return console.warn(error);
+        //     data = json;
+        //     console.log("file loaded");
+        //     initial();
+        // });
+    })
+
+}
+
 var initial = function () {
 
     console.log("page loaded!");
@@ -54,7 +59,7 @@ var initial = function () {
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
 
-    itemSize.height = (chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10) / 24;
+    itemSize.height = (chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10) / 12;
     itemSize.width = itemSize.height;
     // analyse data
     var websiteObjects = {}
@@ -359,7 +364,7 @@ var render = function () {
     xScale.domain([filter.time.from, filter.time.to]);
     console.log(filter);
     var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
-    yScale.domain([0, 23]);
+    yScale.domain([0, 11]);
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
     websiteDivs.enter()
@@ -425,7 +430,8 @@ var render = function () {
         //     wrapper.appendChild(name);
         //     return wrapper;
         // });
-        .append("svg")
+        .append("div")
+        .attr("class", "websiteSVG")
         .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
         .attr("height", chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10);
     // chart.selectAll("div.websiteRect")
@@ -449,8 +455,8 @@ var render = function () {
     websiteDivs.exit().remove();
     var websiteItems = document.getElementsByClassName("websiteRect");
     for (var i = 0; i < websiteItems.length; i++) {
-        var websiteSVG = d3.select(websiteItems[i]).select("svg");
-        var articleRects = websiteSVG.selectAll("rect").data(data[filter.websites[i]].filter(function (item) {
+        var websiteSVG = d3.select(websiteItems[i]).select("div.websiteSVG");
+        var articleRects = websiteSVG.selectAll("div.flash").data(data[filter.websites[i]].filter(function (item) {
             // filter data
             var flag = true;
             // filter time
@@ -467,19 +473,20 @@ var render = function () {
             return flag;
         }));
         articleRects.enter()
-            .append("rect")
-            .attr("x", function (v, i) {
-                return xScale(new Date(toDateString(new Date(v.time["$date"]))));
+            .append("div")
+            .attr("class", "flash")
+            .style("left", function (v, i) {
+                return xScale(new Date(toDateString(new Date(v.time["$date"])))) + "px";
             })
-            .attr("y", function (v, i) {
+            .style("top", function (v, i) {
                 var result = yScale(Math.floor((new Date(v.time["$date"])).getUTCHours()));
-                return result;
+                return result + "px";
             })
-            .attr("rx", 2)
-            .attr("ry", 2)
-            .attr("width", itemSize.width)
-            .attr("height", itemSize.height)
-            .attr("fill", function (v, i) {
+            .style("border-radius", 2)
+            // .attr("ry", 2)
+            .style("width", itemSize.width + "px")
+            .style("height", itemSize.height + "px")
+            .style("background-color", function (v, i) {
                 return colorScale(v.id);
             })
             .on("mouseenter", function (v, i) {
