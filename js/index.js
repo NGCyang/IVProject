@@ -48,7 +48,7 @@ var load = function () {
             if (error) return console.warn(error);
             for (var i = 0; i < result.length; i++) {
                 for (var j = 0; j < result[i].length; j++) {
-                    corpObjects[i][j] = null;
+                    corpObjects[result[i][j]] = null;
                 }
             }
             for (var corp in corpObjects) {
