@@ -11,10 +11,11 @@ var filter = {
 }
 
 var websites = [];
-var topics = [
-
-];
+var topics = [];
 var corps = [];
+var websiteObjects = {}
+var topicObjects = {};
+var corpObjects = {};
 var minTime = null;
 var maxTime = null;
 
@@ -36,15 +37,33 @@ var itemSize = {
 var pageloaded = false;
 
 var load = function () {
-    d3.json("/data/all/website", function (error, result) {
+    d3.xhr("/data/all/website", function (error, result) {
         if (error) return console.warn(error);
-        websites = result;
-        d3.json("/data/all/corp", function (error, result){
-            if(error) return console.warn(error);
-            console.log(result);
-            d3.json("/data/all/topic", function(error,result){
-                if(error) return console.warn(error);
-                console.log(result);
+        for (var i = 0; i < result.length; i++) {
+            websiteObjects[result[i]] = null;
+            websites.push[result[i]];
+        }
+        d3.xhr("/data/all/corp", function (error, result) {
+            if (error) return console.warn(error);
+            for (var i = 0; i < result.length; i++) {
+                for (var j = 0; j < result[i].length; j++) {
+                    corpObjects[i][j] = null;
+                }
+            }
+            for (var corp in corpObjects) {
+                corps.push(corp);
+            }
+            d3.xhr("/data/all/topic", function (error, result) {
+                if (error) return console.warn(error);
+                for (var i = 0; i < result.length; i++) {
+                    for (var j = 0; j < result[i].length; j++) {
+                        topicObjects[result[i][j].group] = null;
+                    }
+                }
+                for(var topic in topicObjects){
+                    topics.push(topic);
+                }
+                initial();
             });
         });
     });
@@ -63,46 +82,46 @@ var initial = function () {
     itemSize.height = (chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10) / 12;
     itemSize.width = itemSize.height;
     // analyse data
-    var websiteObjects = {}
-    var topicObjects = {};
-    var corpObjects = {};
-    for (var i in data) {
-        websiteObjects[i] = null;
-        for (var j = 0; j < data[i].length; j++) {
-            var article = data[i][j];
-            for (var k = 0; k < article.topic.length; k++) {
-                if (!topicObjects[article.topic[k].group])
-                    topicObjects[article.topic[k].group] = {};
-                topicObjects[article.topic[k].group][article.topic[k].type] = null;
-            }
-            for (var k = 0; k < article.corp.length; k++) {
-                corpObjects[article.corp[k]] = null;
-            }
-            var tempDate = new Date(article.time["$date"]);
-            if (minTime === null) minTime = tempDate;
-            else if (minTime > tempDate) minTime = tempDate;
-            if (maxTime === null) maxTime = tempDate;
-            else if (maxTime < tempDate) maxTime = tempDate;
-        }
-        // initialize websites type array
-        websites.push(i);
-    }
+    // var websiteObjects = {}
+    // var topicObjects = {};
+    // var corpObjects = {};
+    // for (var i in data) {
+    //     websiteObjects[i] = null;
+    //     for (var j = 0; j < data[i].length; j++) {
+    //         var article = data[i][j];
+    //         for (var k = 0; k < article.topic.length; k++) {
+    //             if (!topicObjects[article.topic[k].group])
+    //                 topicObjects[article.topic[k].group] = {};
+    //             topicObjects[article.topic[k].group][article.topic[k].type] = null;
+    //         }
+    //         for (var k = 0; k < article.corp.length; k++) {
+    //             corpObjects[article.corp[k]] = null;
+    //         }
+    //         var tempDate = new Date(article.time["$date"]);
+    //         if (minTime === null) minTime = tempDate;
+    //         else if (minTime > tempDate) minTime = tempDate;
+    //         if (maxTime === null) maxTime = tempDate;
+    //         else if (maxTime < tempDate) maxTime = tempDate;
+    //     }
+    //     // initialize websites type array
+    //     websites.push(i);
+    // }
 
     // initialize topic type array
-    for (var name in topicObjects) {
-        var topicTypes = [];
-        for (var subname in topicObjects[name]) {
-            topicTypes.push(subname);
-        }
-        topics.push({
-            groupname: name,
-            value: topicTypes
-        });
-    }
+    // for (var name in topicObjects) {
+    //     var topicTypes = [];
+    //     for (var subname in topicObjects[name]) {
+    //         topicTypes.push(subname);
+    //     }
+    //     topics.push({
+    //         groupname: name,
+    //         value: topicTypes
+    //     });
+    // }
     // initialize corporation type array
-    for (var name in corpObjects) {
-        corps.push(name);
-    }
+    // for (var name in corpObjects) {
+    //     corps.push(name);
+    // }
 
     // read websites
     var websiteContext = d3.select("#websiteSelection").append("div");
@@ -123,6 +142,7 @@ var initial = function () {
                 } else {
                     filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
                 }
+                updateData();
                 if (pageloaded) render();
             }
             var label = document.createElement("label");
@@ -141,33 +161,33 @@ var initial = function () {
         .enter()
         .append(function (v, i) {
             var div = document.createElement("div");
-            div.setAttribute("id", "item_" + v.groupname);
+            div.setAttribute("id", "item_" + v.group);
             div.setAttribute("class", "item");
             var input = document.createElement("input");
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("id", v.groupname);
+            input.setAttribute("id", v.group);
             input.setAttribute("index", i);
             input.onchange = function (event) {
                 if (event.target.checked) {
-                    filter.topics[topics[event.target.getAttribute("index")].groupname] = {};
-                    var values = topics[event.target.getAttribute("index")].value;
-                    for (var j = 0; j < values.length; j++) {
-                        filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = null;
-                    }
+                    filter.topics[topics[event.target.getAttribute("index")].group] = null;
+                    // var values = topics[event.target.getAttribute("index")].value;
+                    // for (var j = 0; j < values.length; j++) {
+                    //     filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = null;
+                    // }
                 } else {
                     delete filter.topics[topics[event.target.getAttribute("index")].groupname];
                 }
-                var thisGroup = document.getElementById("div_group_" + topics[event.target.getAttribute("index")].groupname);
-                var typeInputs = thisGroup.getElementsByTagName("input");
-                for (var j = 0; j < typeInputs.length; j++) {
-                    if (filter.topics[topics[event.target.getAttribute("index")].groupname] !== undefined &&
-                        filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]] !== undefined) {
-                        typeInputs[j].checked = true;
-                    } else {
-                        typeInputs[j].checked = false;
-                    }
-                }
+                // var thisGroup = document.getElementById("div_group_" + topics[event.target.getAttribute("index")].groupname);
+                // var typeInputs = thisGroup.getElementsByTagName("input");
+                // for (var j = 0; j < typeInputs.length; j++) {
+                //     if (filter.topics[topics[event.target.getAttribute("index")].groupname] !== undefined &&
+                //         filter.topics[topics[event.target.getAttribute("index")].groupname][topics[typeInputs[j].getAttribute("groupIndex")].value[typeInputs[j].getAttribute("typeIndex")]] !== undefined) {
+                //         typeInputs[j].checked = true;
+                //     } else {
+                //         typeInputs[j].checked = false;
+                //     }
+                // }
                 if (pageloaded) render();
             };
             var label = document.createElement("label");
@@ -176,46 +196,46 @@ var initial = function () {
             div.appendChild(input);
             div.appendChild(label);
 
-            var typesDiv = document.createElement("div");
-            typesDiv.id = "div_group_" + v.groupname;
-            typesDiv.setAttribute("class", "item");
-            for (var j = 0; j < v.value.length; j++) {
-                var typeDiv = document.createElement("div");
-                typeDiv.setAttribute("id", "item_" + v.value[j]);
-                var typeInput = document.createElement("input");
-                typeInput.setAttribute("class", "filled-in");
-                typeInput.setAttribute("type", "checkbox");
-                typeInput.setAttribute("id", v.value[j]);
-                typeInput.setAttribute("groupIndex", i);
-                typeInput.setAttribute("typeIndex", j);
-                typeInput.onchange = function (event) {
-                    if (event.target.checked) {
-                        if (!filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]) {
-                            filter.topics[topics[event.target.getAttribute("groupIndex")].groupname] = {};
-                        }
-                        filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]]
-                            = null;
-                    } else {
-                        delete filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]];
-                    }
-                    var groupInput = document.getElementById(topics[event.target.getAttribute("groupIndex")].groupname);
-                    if (Object.keys(filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]).length
-                        == topics[event.target.getAttribute("groupIndex")].value.length) {
-                        groupInput.checked = true;
-                    } else {
-                        groupInput.checked = false;
-                    }
-                    if (pageloaded) render();
-                }
-                var typeLabel = document.createElement("label");
-                typeLabel.innerText = v.value[j];
-                typeLabel.setAttribute("for", typeInput.getAttribute("id"));
-                typeDiv.appendChild(typeInput);
-                typeDiv.appendChild(typeLabel);
-                typesDiv.appendChild(typeDiv);
-            }
-            typesDiv.style.paddingLeft = "25px";
-            div.appendChild(typesDiv);
+            // var typesDiv = document.createElement("div");
+            // typesDiv.id = "div_group_" + v.groupname;
+            // typesDiv.setAttribute("class", "item");
+            // for (var j = 0; j < v.value.length; j++) {
+            //     var typeDiv = document.createElement("div");
+            //     typeDiv.setAttribute("id", "item_" + v.value[j]);
+            //     var typeInput = document.createElement("input");
+            //     typeInput.setAttribute("class", "filled-in");
+            //     typeInput.setAttribute("type", "checkbox");
+            //     typeInput.setAttribute("id", v.value[j]);
+            //     typeInput.setAttribute("groupIndex", i);
+            //     typeInput.setAttribute("typeIndex", j);
+            //     typeInput.onchange = function (event) {
+            //         if (event.target.checked) {
+            //             if (!filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]) {
+            //                 filter.topics[topics[event.target.getAttribute("groupIndex")].groupname] = {};
+            //             }
+            //             filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]]
+            //                 = null;
+            //         } else {
+            //             delete filter.topics[topics[event.target.getAttribute("groupIndex")].groupname][topics[event.target.getAttribute("groupIndex")].value[event.target.getAttribute("typeIndex")]];
+            //         }
+            //         var groupInput = document.getElementById(topics[event.target.getAttribute("groupIndex")].groupname);
+            //         if (Object.keys(filter.topics[topics[event.target.getAttribute("groupIndex")].groupname]).length
+            //             == topics[event.target.getAttribute("groupIndex")].value.length) {
+            //             groupInput.checked = true;
+            //         } else {
+            //             groupInput.checked = false;
+            //         }
+            //         if (pageloaded) render();
+            //     }
+            //     var typeLabel = document.createElement("label");
+            //     typeLabel.innerText = v.value[j];
+            //     typeLabel.setAttribute("for", typeInput.getAttribute("id"));
+            //     typeDiv.appendChild(typeInput);
+            //     typeDiv.appendChild(typeLabel);
+            //     typesDiv.appendChild(typeDiv);
+            // }
+            // typesDiv.style.paddingLeft = "25px";
+            // div.appendChild(typesDiv);
             return div;
         });
 
@@ -324,6 +344,10 @@ var toDateString = function (date) {
     if (month < 10) month = "0" + month;
     if (day < 10) day = "0" + day;
     return year + "-" + month + "-" + day;
+}
+
+var updateData = function(){
+
 }
 
 var onTimeChange = function (event) {
