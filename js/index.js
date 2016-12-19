@@ -61,13 +61,13 @@ var load = function () {
         //     for (var topic in topicObjects) {
         //         topics.push(topic);
         //     }
-        //console.log(websites,corps,topics);
-        initial();
-    });
+            //console.log(websites,corps,topics);
+            initial();
+        });
     topics = ['Accounting Actions', 'Business Concerns', 'Company Earnings', 'Contracts', 'Corporate Governance',
-        'Criminal Actions', 'Disaster', 'Employment Actions', 'Financing Actions', 'General Business Actions',
-        'Government', 'Legal Actions', 'Mergers and Acquisitions', 'Product Development', 'Rumors', 'Stock Activities'];
-    // });
+                'Criminal Actions', 'Disaster', 'Employment Actions', 'Financing Actions','General Business Actions',
+                'Government','Legal Actions','Mergers and Acquisitions','Product Development','Rumors','Stock Activities'];
+        // });
     //});
 
 }
@@ -361,7 +361,7 @@ var initial = function () {
 
     // console.log(filter);
     pageloaded = true;
-
+    
     render();
 }
 var toDateString = function (date) {
@@ -420,9 +420,8 @@ var render = function () {
     // var colorScale = d3.scale.category20();
     var xScale = d3.scale.linear().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
     xScale.domain([0, 59]);
-    var xUnit = (filter.time.to.getTime() - filter.time.from.getTime()) / 60;
+    var unit = (filter.time.to.getTime() - filter.time.from.getTime()) / 60;
     console.log(filter);
-    var yUnit = xUnit / 12;
     var yScale = d3.scale.linear().range([chartHeight / 5 - chartMargin.top - chartMargin.bottom - 20, 0]);
     yScale.domain([0, 11]);
 
@@ -537,13 +536,11 @@ var render = function () {
         articleRects.attr("class", "flash")
             .style("left", function (v, i) {
                 var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
-                var result = xScale(Math.floor(dateDisp / xUnit));
+                var result = xScale(Math.floor(dateDisp / unit));
                 return result + "px";
             })
             .style("top", function (v, i) {
-                var currentTime = (new Date(v.time)).getTime();
-                var disp = currentTime - Math.floor((currentTime - filter.time.from.getTime()) / xUnit) * xUnit;
-                var result = yScale(Math.floor(disp / yUnit));
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
                 return result + "px";
             })
             .style("border-radius", 2)
@@ -575,13 +572,11 @@ var render = function () {
             .attr("class", "flash")
             .style("left", function (v, i) {
                 var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
-                var result = xScale(Math.floor(dateDisp / xUnit));
+                var result = xScale(Math.floor(dateDisp / unit));
                 return result + "px";
             })
             .style("top", function (v, i) {
-                var currentTime = (new Date(v.time)).getTime();
-                var disp = currentTime - Math.floor((currentTime - filter.time.from.getTime()) / xUnit) * xUnit;
-                var result = yScale(Math.floor(disp / yUnit));
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
                 return result + "px";
             })
             .style("border-radius", 2)
