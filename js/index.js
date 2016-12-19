@@ -76,7 +76,7 @@ var initial = function () {
     chartWidth = document.getElementById("chart").clientWidth;
     chartHeight = document.getElementById("chart").clientHeight;
 
-    itemSize.height = (chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10) / 12;
+    itemSize.height = (chartHeight / 5 - chartMargin.top - chartMargin.bottom - 10) / 12;
     itemSize.width = itemSize.height;
     // analyse data
     // var websiteObjects = {}
@@ -412,10 +412,11 @@ var onMouseEnter = function (item) {
 
 var render = function () {
     var colorScale = d3.scale.category20();
-    var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
-    xScale.domain([filter.time.from, filter.time.to]);
+    var xScale = d3.scale.linear().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
+    xScale.domain([0, 59]);
+    var unit = (filter.time.to.getTime() - filter.time.from.getTime()) / 60;
     console.log(filter);
-    var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
+    var yScale = d3.scale.linear().range([chartHeight / 5 - chartMargin.top - chartMargin.bottom - 20, 0]);
     yScale.domain([0, 11]);
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(Object.keys(filter.websites));
@@ -424,9 +425,9 @@ var render = function () {
             var website = document.createElement("div");
             website.className = "websiteRect";
             website.style.left = chartMargin.left + "px";
-            website.style.top = i * (chartHeight / 3 + chartMargin.bottom) + chartMargin.top + "px";
+            website.style.top = i * (chartHeight / 5 + chartMargin.bottom) + chartMargin.top + "px";
             website.style.width = chartWidth - chartMargin.left - chartMargin.right - 10 + "px";
-            website.style.height = chartHeight / 3 - chartMargin.top - chartMargin.bottom + "px";
+            website.style.height = chartHeight / 5 - chartMargin.top - chartMargin.bottom + "px";
             var name = document.createElement("div");
             name.className = "float-name";
             name.style.right = "10px";
@@ -485,7 +486,7 @@ var render = function () {
         .append("div")
         .attr("class", "websiteSVG")
         .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
-        .attr("height", chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10);
+        .attr("height", chartHeight / 5 - chartMargin.top - chartMargin.bottom - 10);
     // chart.selectAll("div.websiteRect")
     //     .append("div")
     //     .attr("class", "float-name")
@@ -529,7 +530,9 @@ var render = function () {
             .append("div")
             .attr("class", "flash")
             .style("left", function (v, i) {
-                return xScale(new Date(toDateString(new Date(v.time)))) + "px";
+                var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
+                var result = xScale(dateDisp / unit);
+                return result + "px";
             })
             .style("top", function (v, i) {
                 var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
