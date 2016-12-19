@@ -513,7 +513,7 @@ var render = function () {
             // filter data
             var flag = true;
             // filter time
-            //if (new Date(item.time["$date"]) > filter.time.to || new Date(item.time["$date"]) < filter.time.from) flag = false;
+            if (new Date(item.time) > filter.time.to || new Date(item.time) < filter.time.from) flag = false;
 
             // filter topics
             // for (var i = 0; i < item.topic.length && flag; i++) {

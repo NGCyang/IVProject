@@ -170,17 +170,17 @@ div.websiteSVG{
     font-weight: bold;
 }
 .flash{
-    animation-name: flash;
+    /*animation-name: flash;
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
-    animation-direction: alternate;
+    animation-direction: alternate;*/
     /* Safari 与 Chrome: */
-    -webkit-animation-name: flash;
+    /*-webkit-animation-name: flash;
     -webkit-animation-duration: 1s;
     -webkit-animation-timing-function: ease-in-out;
     -webkit-animation-iteration-count: infinite;
-    -webkit-animation-direction: alternate;
+    -webkit-animation-direction: alternate;*/
 
     position: absolute;
 }
