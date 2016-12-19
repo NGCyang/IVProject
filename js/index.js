@@ -320,8 +320,8 @@ var initial = function () {
                 });
                 filter.websites[name] = null;
             }
+            updateData(name);
         }
-        updateData();
     });
     $("input#autocomplete-text-topic").autocomplete({
         data: topicObjects
