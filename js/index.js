@@ -320,9 +320,8 @@ var initial = function () {
                 newChip.className = "chip";
                 websiteChips.appendChild(newChip);
                 $(newChip).on('click.chips-delete', { name }, function (event) {
-                    console.log(filter.websites);
                     delete filter.websites[event.data.name];
-                    console.log(filter.websites);
+                    render();
                 });
                 filter.websites[name] = null;
             }
@@ -338,7 +337,7 @@ var initial = function () {
         var list = document.getElementById("topicsSelection");
         if (target) {
             list.scrollTop = target.offsetTop - list.offsetTop;
-            item.style.backgroundColor = "#009688";
+            item.style.backgroundColor = "#f5f5f5";
             setTimeout(function () {
                 item.style.backgroundColor = "#ffffff";
             }, 500)
