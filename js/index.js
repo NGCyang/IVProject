@@ -193,7 +193,7 @@ var initial = function () {
                 //     }
                 // }
                 if (pageloaded) render();
-            // };
+            };
             // var label = document.createElement("label");
             // label.innerText = v;
             // label.setAttribute("for", input.getAttribute("id"));
