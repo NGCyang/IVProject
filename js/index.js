@@ -1,4 +1,4 @@
-var data = null;
+var data = {};
 var filter = {
     time: {
         from: null,
@@ -516,22 +516,23 @@ var render = function () {
     //     .text(function (v) { return v; });
     websiteDivs.exit().remove();
     var websiteItems = document.getElementsByClassName("websiteRect");
+    var filteredWebsite = Object.keys(filter.websites);
     for (var i = 0; i < websiteItems.length; i++) {
         var websiteSVG = d3.select(websiteItems[i]).select("div.websiteSVG");
-        var articleRects = websiteSVG.selectAll("div.flash").data(data[filter.websites[i]].filter(function (item) {
+        var articleRects = websiteSVG.selectAll("div.flash").data(data[filteredWebsite[i]].filter(function (item) {
             // filter data
             var flag = true;
             // filter time
-            if (new Date(item.time["$date"]) > filter.time.to || new Date(item.time["$date"]) < filter.time.from) flag = false;
+            //if (new Date(item.time["$date"]) > filter.time.to || new Date(item.time["$date"]) < filter.time.from) flag = false;
 
             // filter topics
-            for (var i = 0; i < item.topic.length && flag; i++) {
-                if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
-            }
+            // for (var i = 0; i < item.topic.length && flag; i++) {
+            //     if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
+            // }
             // filter corporations
-            for (var i = 0; i < item.corp.length && flag; i++) {
-                if (filter.corporations[item.corp[i]] === undefined) flag = false;
-            }
+            // for (var i = 0; i < item.corp.length && flag; i++) {
+            //     if (filter.corporations[item.corp[i]] === undefined) flag = false;
+            // }
             return flag;
         }));
         articleRects.enter()
