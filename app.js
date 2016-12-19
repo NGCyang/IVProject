@@ -39,7 +39,7 @@ dataRouter.route('/website/:name/:startTime/:endTime')
     Articles.find(
         {'website': req.params.name,
             'first_mention': true,
-            "created_on": {"$gte": new Date(req.params.startTime), "$lt": new Date(req.params.endTime)}}, function (err, article) {
+            "time": {"$gte": new Date(req.params.startTime), "$lt": new Date(req.params.endTime)}}, function (err, article) {
         if (err) throw err;
         res.json(article);
     });   
