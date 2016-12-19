@@ -1,7 +1,7 @@
 import json
 import csv
 from datetime import datetime
-from bson import json_util
+# from bson import json_util
 from pymongo import MongoClient
 
 """

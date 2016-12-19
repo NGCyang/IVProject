@@ -532,7 +532,7 @@ var render = function () {
                 return xScale(new Date(toDateString(new Date(v.time)))) + "px";
             })
             .style("top", function (v, i) {
-                var result = yScale(Math.floor((new Date(v.time)).getUTCHours()));
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
                 return result + "px";
             })
             .style("border-radius", 2)
