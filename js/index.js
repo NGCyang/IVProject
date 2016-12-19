@@ -167,7 +167,7 @@ var initial = function () {
             div.setAttribute("id", "item_" + v);
             div.setAttribute("class", "item");
             var input = document.createElement("input");
-            input.setAttribute("class", "filled-in  grey lighten-4");
+            input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
             input.setAttribute("id", v);
             input.setAttribute("index", i);
