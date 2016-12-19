@@ -159,6 +159,8 @@ div.websiteSVG{
 .item{
     transition: background-color 0.3s;
     background-color: #ffffff;
+    width: 100%;
+    
 }
 .clearframe{
     clear: both;

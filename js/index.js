@@ -167,11 +167,10 @@ var initial = function () {
             div.setAttribute("id", "item_" + v);
             div.setAttribute("class", "item");
             var input = document.createElement("input");
-            // input.setAttribute("class", "filled-in");
+            input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
             input.setAttribute("id", v);
             input.setAttribute("index", i);
-            input.innerHTML = v;
             input.onchange = function (event) {
                 if (event.target.checked) {
                     filter.topics[topics[event.target.getAttribute("index")]] = null;
@@ -194,11 +193,11 @@ var initial = function () {
                 // }
                 if (pageloaded) render();
             };
-            // var label = document.createElement("label");
-            // label.innerText = v;
-            // label.setAttribute("for", input.getAttribute("id"));
+            var label = document.createElement("label");
+            label.innerText = v;
+            label.setAttribute("for", input.getAttribute("id"));
             div.appendChild(input);
-            // div.appendChild(label);
+            div.appendChild(label);
 
             // var typesDiv = document.createElement("div");
             // typesDiv.id = "div_group_" + v.groupname;
