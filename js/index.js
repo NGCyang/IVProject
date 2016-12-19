@@ -531,7 +531,7 @@ var render = function () {
             .attr("class", "flash")
             .style("left", function (v, i) {
                 var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
-                var result = xScale(dateDisp / unit);
+                var result = xScale(Math.floor(dateDisp / unit));
                 return result + "px";
             })
             .style("top", function (v, i) {
