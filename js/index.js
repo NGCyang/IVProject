@@ -4,20 +4,20 @@ var filter = {
         from: null,
         to: null
     },
-    websites: [],
+    websites: {},
     topics: {
     },
     corporations: {}
 }
 
-var websites = [];
+var websites = ["as", "bs"];
 var topics = [];
 var corps = [];
-var websiteObjects = {}
+var websiteObjects = {as: null, bs: null}
 var topicObjects = {};
 var corpObjects = {};
-var minTime = null;
-var maxTime = null;
+var minTime = new Date("2016-01-01 00:00:00 UTC");
+var maxTime = new Date("2016-08-20 00:00:00 UTC");
 
 var websiteCard;
 
@@ -186,7 +186,7 @@ var initial = function () {
                 //         typeInputs[j].checked = false;
                 //     }
                 // }
-                //if (pageloaded) render();
+                if (pageloaded) render();
             };
             var label = document.createElement("label");
             label.innerText = v;
@@ -256,7 +256,7 @@ var initial = function () {
                 } else {
                     delete filter.corporations[event.target.id];
                 }
-                //if (pageloaded) render();
+                if (pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -275,10 +275,6 @@ var initial = function () {
     for (var i = 0; i < corps.length; i++) {
         document.getElementById(corps[i]).click();
     }
-
-    // debug
-    minTime = new Date("2016-01-01");
-    maxTime = new Date("2016-01-10");
 
     // initial time
     maxTime = new Date(maxTime.getTime() + 24 * 60 * 60 * 1000);
@@ -306,10 +302,8 @@ var initial = function () {
         var websiteChips = document.getElementById("websiteSelection");
         if (websiteObjects[name] !== undefined) {
             var flag = false;
-            var chips = websiteChips.getElementsByClassName("chip");
-            console.log(chips);
-            for (var i = 0; i < chips.length; i++) {
-                if (chips[i].getAttribute("name") == name) {
+            for (var i in filter.websites) {
+                if(i == name) {
                     flag = true;
                     break;
                 }
@@ -317,11 +311,17 @@ var initial = function () {
             if (!flag) {
                 var newChip = document.createElement("div");
                 newChip.innerHTML = name + "<i class='close material-icons'>close</i>";
-                newChip.setAttribute("name", name);
                 newChip.className = "chip";
                 websiteChips.appendChild(newChip);
+                $(newChip).on('click.chips-delete', {name}, function(event){
+                    console.log(filter.websites);
+                    delete filter.websites[event.data.name];
+                    console.log(filter.websites);
+                });
+                filter.websites[name] = null;
             }
         }
+        updateData();
     });
     $("input#autocomplete-text-topic").autocomplete({
         data: topicObjects
@@ -338,7 +338,6 @@ var initial = function () {
             }, 500)
         }
     });
-    console.log(topicObjects)
     $("input#autocomplete-text-corp").autocomplete({
         data: corpObjects
     }).change(function (event) {
@@ -357,7 +356,13 @@ var initial = function () {
 
     // console.log(filter);
     pageloaded = true;
-    //render();
+    setInterval(function(){
+        if(counter == 0){
+            counter --;
+            render();
+        }
+    }, 1000);
+    render();
 }
 var toDateString = function (date) {
     var year = date.getUTCFullYear();
@@ -368,8 +373,18 @@ var toDateString = function (date) {
     return year + "-" + month + "-" + day;
 }
 
-var updateData = function () {
+var counter = -1;
 
+var updateData = function () {
+    counter = 0;
+    for(var website in filter.websites){
+        counter ++;
+        d3.json("/data/website/" + website, function(error, result){
+            if(error) return console.warn(error);
+            data[result.website] = result;
+            counter --;
+        })
+    }
 }
 
 var onTimeChange = function (event) {
@@ -380,7 +395,7 @@ var onTimeChange = function (event) {
     } else if (event.target.id == "date_filter_input_to") {
         filter.time.to = date;
     }
-    // render();
+    render();
 }
 
 var onMouseEnter = function (item) {
@@ -413,7 +428,7 @@ var render = function () {
     var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
     yScale.domain([0, 11]);
 
-    var websiteDivs = chart.selectAll("div.websiteRect").data(filter.websites);
+    var websiteDivs = chart.selectAll("div.websiteRect").data(Object.keys(filter.websites));
     websiteDivs.enter()
         .append(function (v, i) {
             var website = document.createElement("div");
