@@ -56,7 +56,7 @@ var load = function () {
                 for (var i = 0; i < result.length; i++) {
                     topicObjects[result[i].group] = null;
                 }
-                for(var topic in topicObjects){
+                for (var topic in topicObjects) {
                     topics.push(topic);
                 }
                 //console.log(websites,corps,topics);
@@ -121,35 +121,36 @@ var initial = function () {
     // }
 
     // read websites
-    var websiteContext = d3.select("#websiteSelection").append("div");
-    websiteContext.selectAll("div.item")
-        .data(websites)
-        .enter()
-        .append(function (v, i) {
-            var div = document.createElement("div");
-            div.setAttribute("id", "item_" + v);
-            div.setAttribute("class", "item");
-            var input = document.createElement("input");
-            input.setAttribute("class", "filled-in");
-            input.setAttribute("type", "checkbox");
-            input.setAttribute("id", v);
-            input.onchange = function (event) {
-                if (event.target.checked) {
-                    filter.websites.push(event.target.id);
-                } else {
-                    filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
-                }
-                updateData();
-                //if (pageloaded) render();
-            }
-            var label = document.createElement("label");
-            label.innerText = v;
-            label.setAttribute("for", input.getAttribute("id"));
-            div.appendChild(input);
-            div.appendChild(label);
-            // var test = document.createElement("div");
-            return div;
-        });
+    // var websiteContext = d3.select("#websiteSelection").append("div");
+    // websiteContext.selectAll("div.item")
+    //     .data(websites)
+    //     .enter()
+    //     .append(function (v, i) {
+    //         var div = document.createElement("div");
+    //         div.setAttribute("id", "item_" + v);
+    //         div.setAttribute("class", "item");
+    //         var input = document.createElement("input");
+    //         input.setAttribute("class", "filled-in");
+    //         input.setAttribute("type", "checkbox");
+    //         input.setAttribute("id", v);
+    //         input.onchange = function (event) {
+    //             if (event.target.checked) {
+    //                 filter.websites.push(event.target.id);
+    //             } else {
+    //                 filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
+    //             }
+    //             updateData();
+    //             //if (pageloaded) render();
+    //         }
+    //         var label = document.createElement("label");
+    //         label.innerText = v;
+    //         label.setAttribute("for", input.getAttribute("id"));
+    //         div.appendChild(input);
+    //         div.appendChild(label);
+    //         // var test = document.createElement("div");
+    //         return div;
+    //     });
+
 
     // read topics
     var topicsContext = d3.select("#topicsSelection");
@@ -290,16 +291,36 @@ var initial = function () {
     $("input#autocomplete-text-website").autocomplete({
         data: websiteObjects
     }).change(function (event) {
+        // var name = event.target.value;
+        // var target = document.getElementById(name);
+        // var item = document.getElementById("item_" + name);
+        // var list = document.getElementById("websiteSelection");
+        // if (target) {
+        //     list.scrollTop = target.offsetTop - list.offsetTop;
+        //     item.style.backgroundColor = "#009688";
+        //     setTimeout(function () {
+        //         item.style.backgroundColor = "#ffffff";
+        //     }, 500)
+        // }
         var name = event.target.value;
-        var target = document.getElementById(name);
-        var item = document.getElementById("item_" + name);
-        var list = document.getElementById("websiteSelection");
-        if (target) {
-            list.scrollTop = target.offsetTop - list.offsetTop;
-            item.style.backgroundColor = "#009688";
-            setTimeout(function () {
-                item.style.backgroundColor = "#ffffff";
-            }, 500)
+        var websiteChips = document.getElementById("websiteSelection");
+        if (websiteObjects[name] !== undefined) {
+            var flag = false;
+            var chips = websiteChips.getElementsByClassName("chip");
+            console.log(chips);
+            for (var i = 0; i < chips.length; i++) {
+                if (chips[i].getAttribute("name") == name) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                var newChip = document.createElement("div");
+                newChip.innerHTML = name + "<i class='close material-icons'>close</i>";
+                newChip.setAttribute("name", name);
+                newChip.className = "chip";
+                websiteChips.appendChild(newChip);
+            }
         }
     });
     $("input#autocomplete-text-topic").autocomplete({
@@ -347,7 +368,7 @@ var toDateString = function (date) {
     return year + "-" + month + "-" + day;
 }
 
-var updateData = function(){
+var updateData = function () {
 
 }
 
