@@ -34,6 +34,8 @@ var itemSize = {
     height: 20
 };
 
+var colorScale = d3.scale.category20();
+
 var pageloaded = false;
 
 var load = function () {
@@ -273,6 +275,7 @@ var initial = function () {
     //     document.getElementById(websites[i]).click();
     // }
     for (var i = 0; i < topics.length; i++) {
+        colorScale(topics[i].group);
         document.getElementById(topics[i]).click();
     }
     // for (var i = 0; i < corps.length; i++) {
@@ -359,6 +362,7 @@ var initial = function () {
 
     // console.log(filter);
     pageloaded = true;
+    
     render();
 }
 var toDateString = function (date) {
@@ -414,7 +418,7 @@ var onMouseEnter = function (item) {
 }
 
 var render = function () {
-    var colorScale = d3.scale.category20();
+    // var colorScale = d3.scale.category20();
     var xScale = d3.scale.linear().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
     xScale.domain([0, 59]);
     var unit = (filter.time.to.getTime() - filter.time.from.getTime()) / 60;
@@ -423,6 +427,7 @@ var render = function () {
     yScale.domain([0, 11]);
 
     var websiteDivs = chart.selectAll("div.websiteRect").data(Object.keys(filter.websites));
+    websiteDivs.select("div.float-name").text(function (v, i) { return v; });
     websiteDivs.enter()
         .append(function (v, i) {
             var website = document.createElement("div");
