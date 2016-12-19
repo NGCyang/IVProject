@@ -526,6 +526,40 @@ var render = function () {
             // }
             return flag;
         }));
+        articleRect.attr("class", "flash")
+            .style("left", function (v, i) {
+                var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
+                var result = xScale(Math.floor(dateDisp / unit));
+                return result + "px";
+            })
+            .style("top", function (v, i) {
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
+                return result + "px";
+            })
+            .style("border-radius", 2)
+            // .attr("ry", 2)
+            .style("width", itemSize.width + "px")
+            .style("height", itemSize.height + "px")
+            .style("background-color", function (v, i) {
+                return colorScale(v.topic[0].group);
+            })
+            .on("mouseenter", function (v, i) {
+                onMouseEnter(v);
+                d3.event.target.style.stroke = "#66ccff";
+                d3.select("#float_info").style({
+                    visibility: "visible",
+                    transform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    WebkitTransform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    opacity: 1
+                });
+            })
+            .on("mouseleave", function (v, i) {
+                d3.event.target.style.stroke = null;
+                d3.select("#float_info").style({
+                    visibility: "hidden",
+                    opacity: 0
+                });
+            });
         articleRects.enter()
             .append("div")
             .attr("class", "flash")
