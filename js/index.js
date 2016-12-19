@@ -43,7 +43,14 @@ var load = function () {
             websiteObjects[result[i]] = null;
             websites.push(result[i]);
         }
-
+        // d3.json("/data/all/corp", function (error, result) {
+        //     if (error) return console.warn(error);
+        //     for (var i = 0; i < result.length; i++) {
+        //         corpObjects[result[i]] = null;
+        //     }
+        //     for (var corp in corpObjects) {
+        //         corps.push(corp);
+        //     }
         d3.json("/data/all/topic", function (error, result) {
             if (error) return console.warn(error);
             for (var i = 0; i < result.length; i++) {
@@ -55,7 +62,7 @@ var load = function () {
             //console.log(websites,corps,topics);
             initial();
         });
-
+        // });
     });
 
 }
@@ -264,228 +271,203 @@ var initial = function () {
     // }
     for (var i = 0; i < topics.length; i++) {
         document.getElementById(topics[i]).click();
+    }
+    // for (var i = 0; i < corps.length; i++) {
+    //     document.getElementById(corps[i]).click();
+    // }
+
+    // initial time
+    maxTime = new Date(maxTime.getTime() + 24 * 60 * 60 * 1000);
+    document.getElementById("date_filter_input_from").value = toDateString(minTime);
+    document.getElementById("date_filter_input_to").value = toDateString(maxTime);
+    filter.time.from = new Date(toDateString(minTime));
+    filter.time.to = new Date(toDateString(maxTime));
+
+    // initial autocomplete
+    $("input#autocomplete-text-website").autocomplete({
+        data: websiteObjects
+    }).change(function (event) {
+        // var name = event.target.value;
+        // var target = document.getElementById(name);
+        // var item = document.getElementById("item_" + name);
+        // var list = document.getElementById("websiteSelection");
+        // if (target) {
+        //     list.scrollTop = target.offsetTop - list.offsetTop;
+        //     item.style.backgroundColor = "#009688";
+        //     setTimeout(function () {
+        //         item.style.backgroundColor = "#ffffff";
+        //     }, 500)
         // }
-        // for (var i = 0; i < corps.length; i++) {
-        //     document.getElementById(corps[i]).click();
-        // }
-
-        // initial time
-        maxTime = new Date(maxTime.getTime() + 24 * 60 * 60 * 1000);
-        document.getElementById("date_filter_input_from").value = toDateString(minTime);
-        document.getElementById("date_filter_input_to").value = toDateString(maxTime);
-        filter.time.from = new Date(toDateString(minTime));
-        filter.time.to = new Date(toDateString(maxTime));
-
-        // initial autocomplete
-        $("input#autocomplete-text-website").autocomplete({
-            data: websiteObjects
-        }).change(function (event) {
-            // var name = event.target.value;
-            // var target = document.getElementById(name);
-            // var item = document.getElementById("item_" + name);
-            // var list = document.getElementById("websiteSelection");
-            // if (target) {
-            //     list.scrollTop = target.offsetTop - list.offsetTop;
-            //     item.style.backgroundColor = "#009688";
-            //     setTimeout(function () {
-            //         item.style.backgroundColor = "#ffffff";
-            //     }, 500)
-            // }
-            var name = event.target.value;
-            var websiteChips = document.getElementById("websiteSelection");
-            if (websiteObjects[name] !== undefined) {
-                var flag = false;
-                for (var i in filter.websites) {
-                    if (i == name) {
-                        flag = true;
-                        break;
-                    }
+        var name = event.target.value;
+        var websiteChips = document.getElementById("websiteSelection");
+        if (websiteObjects[name] !== undefined) {
+            var flag = false;
+            for (var i in filter.websites) {
+                if (i == name) {
+                    flag = true;
+                    break;
                 }
-                if (!flag) {
-                    var newChip = document.createElement("div");
-                    newChip.innerHTML = name + "<i class='close material-icons'>close</i>";
-                    newChip.className = "chip";
-                    websiteChips.appendChild(newChip);
-                    $(newChip).on('click.chips-delete', { name }, function (event) {
-                        console.log(filter.websites);
-                        delete filter.websites[event.data.name];
-                        console.log(filter.websites);
-                    });
-                    filter.websites[name] = null;
-                }
-                updateData(name);
             }
-        });
-        $("input#autocomplete-text-topic").autocomplete({
-            data: topicObjects
-        }).change(function (event) {
-            var name = event.target.value;
-            var target = document.getElementById(name);
-            var item = document.getElementById("item_" + name);
-            var list = document.getElementById("topicsSelection");
-            if (target) {
-                list.scrollTop = target.offsetTop - list.offsetTop;
-                item.style.backgroundColor = "#009688";
-                setTimeout(function () {
-                    item.style.backgroundColor = "#ffffff";
-                }, 500)
-            }
-        });
-        // $("input#autocomplete-text-corp").autocomplete({
-        //     data: corpObjects
-        // }).change(function (event) {
-        //     var name = event.target.value;
-        //     var target = document.getElementById(name);
-        //     var item = document.getElementById("item_" + name);
-        //     var list = document.getElementById("corpsSelection");
-        //     if (target) {
-        //         list.scrollTop = target.offsetTop - list.offsetTop;
-        //         item.style.backgroundColor = "#009688";
-        //         setTimeout(function () {
-        //             item.style.backgroundColor = "#ffffff";
-        //         }, 500)
-        //     }
-        // });
-
-        // console.log(filter);
-        pageloaded = true;
-        render();
-    }
-    var toDateString = function (date) {
-        var year = date.getUTCFullYear();
-        var month = date.getUTCMonth() + 1;
-        var day = date.getUTCDate();
-        if (month < 10) month = "0" + month;
-        if (day < 10) day = "0" + day;
-        return year + "-" + month + "-" + day;
-    }
-
-
-    var updateData = function (website) {
-        d3.json("/data/website/" + website, function (error, result) {
-            if (error) return console.warn(error);
-            data[result[0].website] = result;
-            render();
-        })
-
-    }
-
-    var onTimeChange = function (event) {
-        var value = event.target.value;
-        var date = new Date(value);
-        if (event.target.id == "date_filter_input_from") {
-            filter.time.from = date;
-        } else if (event.target.id == "date_filter_input_to") {
-            filter.time.to = date;
-        }
-        render();
-    }
-
-    var onMouseEnter = function (item) {
-        var floatInfo = document.getElementById("float_info");
-        var wrapper = document.createElement("div");
-        for (var i = 0; i < item.topic.length; i++) {
-            var group = document.createElement("div");
-            group.innerHTML = "Topic Group" + (i + 1) + ": " + item.topic[i].group;
-            var type = document.createElement("div");
-            type.innerHTML = "Topic Type" + (i + 1) + ": " + item.topic[i].type;
-            wrapper.appendChild(group);
-            wrapper.appendChild(type);
-        }
-        for (var i = 0; i < item.corp.length; i++) {
-            var corp = document.createElement("div");
-            corp.innerHTML = "Corporation" + (i + 1) + ": " + item.corp[i];
-            wrapper.appendChild(corp);
-        }
-        var time = document.createElement("div");
-        time.innerHTML = "Time: " + (new Date(item.time)).toUTCString();
-        wrapper.appendChild(time);
-        floatInfo.replaceChild(wrapper, floatInfo.children[0]);
-    }
-
-    var render = function () {
-        var colorScale = d3.scale.category20();
-        var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
-        xScale.domain([filter.time.from, filter.time.to]);
-        console.log(filter);
-        var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
-        yScale.domain([0, 11]);
-
-        var websiteDivs = chart.selectAll("div.websiteRect").data(Object.keys(filter.websites));
-        websiteDivs.enter()
-            .append(function (v, i) {
-                var website = document.createElement("div");
-                website.className = "websiteRect";
-                website.style.left = chartMargin.left + "px";
-                website.style.top = i * (chartHeight / 3 + chartMargin.bottom) + chartMargin.top + "px";
-                website.style.width = chartWidth - chartMargin.left - chartMargin.right - 10 + "px";
-                website.style.height = chartHeight / 3 - chartMargin.top - chartMargin.bottom + "px";
-                var name = document.createElement("div");
-                name.className = "float-name";
-                name.style.right = "10px";
-                name.addEventListener("mouseenter", function (event) {
-                    var right = event.target.style.right;
-                    var left = event.target.style.left;
-                    if (right == "10px") {
-                        left = "10px";
-                        right = "";
-                    } else if (left == "10px") {
-                        left = "";
-                        right = "10px";
-                    }
-                    event.target.style.right = right;
-                    event.target.style.left = left;
+            if (!flag) {
+                var newChip = document.createElement("div");
+                newChip.innerHTML = name + "<i class='close material-icons'>close</i>";
+                newChip.className = "chip";
+                websiteChips.appendChild(newChip);
+                $(newChip).on('click.chips-delete', { name }, function (event) {
+                    console.log(filter.websites);
+                    delete filter.websites[event.data.name];
+                    console.log(filter.websites);
                 });
-                name.innerText = v;
-                website.appendChild(name);
-                return website;
-            })
-            // .append("div")
-            // .attr("class", "websiteRect")
-            // .style("left", chartMargin.left + "px")
-            // .style("top", function (v, i) {
-            //     return i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
-            // })
-            // .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
-            // .style("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px")
-            // .append(function (v, i) {
-            //     var wrapper = document.createElement("div");
-            //     wrapper.className = "svg-wrapper";
-            //     var svg = document.createElement("svg");
-            //     svg.setAttribute("width", chartWidth - chartMargin.left - chartMargin.right - 10);
-            //     svg.setAttribute("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
-            //     wrapper.appendChild(svg);
-            //     var name = document.createElement("div");
-            //     name.className = "float-name";
-            //     name.style.right = "10px";
-            //     name.addEventListener("mouseenter", function (event) {
-            //         var right = event.target.style.right;
-            //         var left = event.target.style.left;
-            //         if (right == "10px") {
-            //             left = "10px";
-            //             right = "";
-            //         } else if (left == "10px") {
-            //             left = "";
-            //             right = "10px";
-            //         }
-            //         event.target.style.right = right;
-            //         event.target.style.left = left;
-            //     });
-            //     name.innerText = v;
-            //     wrapper.appendChild(name);
-            //     return wrapper;
-            // });
-            .append("div")
-            .attr("class", "websiteSVG")
-            .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
-            .attr("height", chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10);
-        // chart.selectAll("div.websiteRect")
-        //     .append("div")
-        //     .attr("class", "float-name")
-        //     .style({ right: "10px" })
-        //     .on("mouseenter", function (v, i) {
-        //         var right = d3.event.target.style.right;
-        //         var left = d3.event.target.style.left;
+                filter.websites[name] = null;
+            }
+            updateData(name);
+        }
+    });
+    $("input#autocomplete-text-topic").autocomplete({
+        data: topicObjects
+    }).change(function (event) {
+        var name = event.target.value;
+        var target = document.getElementById(name);
+        var item = document.getElementById("item_" + name);
+        var list = document.getElementById("topicsSelection");
+        if (target) {
+            list.scrollTop = target.offsetTop - list.offsetTop;
+            item.style.backgroundColor = "#009688";
+            setTimeout(function () {
+                item.style.backgroundColor = "#ffffff";
+            }, 500)
+        }
+    });
+    // $("input#autocomplete-text-corp").autocomplete({
+    //     data: corpObjects
+    // }).change(function (event) {
+    //     var name = event.target.value;
+    //     var target = document.getElementById(name);
+    //     var item = document.getElementById("item_" + name);
+    //     var list = document.getElementById("corpsSelection");
+    //     if (target) {
+    //         list.scrollTop = target.offsetTop - list.offsetTop;
+    //         item.style.backgroundColor = "#009688";
+    //         setTimeout(function () {
+    //             item.style.backgroundColor = "#ffffff";
+    //         }, 500)
+    //     }
+    // });
+
+    // console.log(filter);
+    pageloaded = true;
+    render();
+}
+var toDateString = function (date) {
+    var year = date.getUTCFullYear();
+    var month = date.getUTCMonth() + 1;
+    var day = date.getUTCDate();
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+    return year + "-" + month + "-" + day;
+}
+
+
+var updateData = function (website) {
+    d3.json("/data/website/" + website, function (error, result) {
+        if (error) return console.warn(error);
+        data[result[0].website] = result;
+        render();
+    })
+
+}
+
+var onTimeChange = function (event) {
+    var value = event.target.value;
+    var date = new Date(value);
+    if (event.target.id == "date_filter_input_from") {
+        filter.time.from = date;
+    } else if (event.target.id == "date_filter_input_to") {
+        filter.time.to = date;
+    }
+    render();
+}
+
+var onMouseEnter = function (item) {
+    var floatInfo = document.getElementById("float_info");
+    var wrapper = document.createElement("div");
+    for (var i = 0; i < item.topic.length; i++) {
+        var group = document.createElement("div");
+        group.innerHTML = "Topic Group" + (i + 1) + ": " + item.topic[i].group;
+        var type = document.createElement("div");
+        type.innerHTML = "Topic Type" + (i + 1) + ": " + item.topic[i].type;
+        wrapper.appendChild(group);
+        wrapper.appendChild(type);
+    }
+    for (var i = 0; i < item.corp.length; i++) {
+        var corp = document.createElement("div");
+        corp.innerHTML = "Corporation" + (i + 1) + ": " + item.corp[i];
+        wrapper.appendChild(corp);
+    }
+    var time = document.createElement("div");
+    time.innerHTML = "Time: " + (new Date(item.time)).toUTCString();
+    wrapper.appendChild(time);
+    floatInfo.replaceChild(wrapper, floatInfo.children[0]);
+}
+
+var render = function () {
+    var colorScale = d3.scale.category20();
+    var xScale = d3.time.scale.utc().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
+    xScale.domain([filter.time.from, filter.time.to]);
+    console.log(filter);
+    var yScale = d3.scale.linear().range([chartHeight / 3 - chartMargin.top - chartMargin.bottom - 20, 0]);
+    yScale.domain([0, 11]);
+
+    var websiteDivs = chart.selectAll("div.websiteRect").data(Object.keys(filter.websites));
+    websiteDivs.enter()
+        .append(function (v, i) {
+            var website = document.createElement("div");
+            website.className = "websiteRect";
+            website.style.left = chartMargin.left + "px";
+            website.style.top = i * (chartHeight / 3 + chartMargin.bottom) + chartMargin.top + "px";
+            website.style.width = chartWidth - chartMargin.left - chartMargin.right - 10 + "px";
+            website.style.height = chartHeight / 3 - chartMargin.top - chartMargin.bottom + "px";
+            var name = document.createElement("div");
+            name.className = "float-name";
+            name.style.right = "10px";
+            name.addEventListener("mouseenter", function (event) {
+                var right = event.target.style.right;
+                var left = event.target.style.left;
+                if (right == "10px") {
+                    left = "10px";
+                    right = "";
+                } else if (left == "10px") {
+                    left = "";
+                    right = "10px";
+                }
+                event.target.style.right = right;
+                event.target.style.left = left;
+            });
+            name.innerText = v;
+            website.appendChild(name);
+            return website;
+        })
+        // .append("div")
+        // .attr("class", "websiteRect")
+        // .style("left", chartMargin.left + "px")
+        // .style("top", function (v, i) {
+        //     return i * (chartHeight / 4 + chartMargin.bottom) + chartMargin.top + "px";
+        // })
+        // .style("width", chartWidth - chartMargin.left - chartMargin.right - 10 + "px")
+        // .style("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom + "px")
+        // .append(function (v, i) {
+        //     var wrapper = document.createElement("div");
+        //     wrapper.className = "svg-wrapper";
+        //     var svg = document.createElement("svg");
+        //     svg.setAttribute("width", chartWidth - chartMargin.left - chartMargin.right - 10);
+        //     svg.setAttribute("height", chartHeight / 4 - chartMargin.top - chartMargin.bottom - 10);
+        //     wrapper.appendChild(svg);
+        //     var name = document.createElement("div");
+        //     name.className = "float-name";
+        //     name.style.right = "10px";
+        //     name.addEventListener("mouseenter", function (event) {
+        //         var right = event.target.style.right;
+        //         var left = event.target.style.left;
         //         if (right == "10px") {
         //             left = "10px";
         //             right = "";
@@ -493,65 +475,90 @@ var initial = function () {
         //             left = "";
         //             right = "10px";
         //         }
-        //         d3.event.target.style.right = right;
-        //         d3.event.target.style.left = left;
-        //     })
-        //     .text(function (v) { return v; });
-        websiteDivs.exit().remove();
-        var websiteItems = document.getElementsByClassName("websiteRect");
-        var filteredWebsite = Object.keys(filter.websites);
-        for (var i = 0; i < websiteItems.length; i++) {
-            var websiteSVG = d3.select(websiteItems[i]).select("div.websiteSVG");
-            var articleRects = websiteSVG.selectAll("div.flash").data(data[filteredWebsite[i]].filter(function (item) {
-                // filter data
-                var flag = true;
-                // filter time
-                if (new Date(item.time) > filter.time.to || new Date(item.time) < filter.time.from) flag = false;
+        //         event.target.style.right = right;
+        //         event.target.style.left = left;
+        //     });
+        //     name.innerText = v;
+        //     wrapper.appendChild(name);
+        //     return wrapper;
+        // });
+        .append("div")
+        .attr("class", "websiteSVG")
+        .attr("width", chartWidth - chartMargin.left - chartMargin.right - 10)
+        .attr("height", chartHeight / 3 - chartMargin.top - chartMargin.bottom - 10);
+    // chart.selectAll("div.websiteRect")
+    //     .append("div")
+    //     .attr("class", "float-name")
+    //     .style({ right: "10px" })
+    //     .on("mouseenter", function (v, i) {
+    //         var right = d3.event.target.style.right;
+    //         var left = d3.event.target.style.left;
+    //         if (right == "10px") {
+    //             left = "10px";
+    //             right = "";
+    //         } else if (left == "10px") {
+    //             left = "";
+    //             right = "10px";
+    //         }
+    //         d3.event.target.style.right = right;
+    //         d3.event.target.style.left = left;
+    //     })
+    //     .text(function (v) { return v; });
+    websiteDivs.exit().remove();
+    var websiteItems = document.getElementsByClassName("websiteRect");
+    var filteredWebsite = Object.keys(filter.websites);
+    for (var i = 0; i < websiteItems.length; i++) {
+        var websiteSVG = d3.select(websiteItems[i]).select("div.websiteSVG");
+        var articleRects = websiteSVG.selectAll("div.flash").data(data[filteredWebsite[i]].filter(function (item) {
+            // filter data
+            var flag = true;
+            // filter time
+            if (new Date(item.time) > filter.time.to || new Date(item.time) < filter.time.from) flag = false;
 
-                // filter topics
-                // for (var i = 0; i < item.topic.length && flag; i++) {
-                //     if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
-                // }
-                // filter corporations
-                // for (var i = 0; i < item.corp.length && flag; i++) {
-                //     if (filter.corporations[item.corp[i]] === undefined) flag = false;
-                // }
-                return flag;
-            }));
-            articleRects.enter()
-                .append("div")
-                .attr("class", "flash")
-                .style("left", function (v, i) {
-                    return xScale(new Date(toDateString(new Date(v.time)))) + "px";
-                })
-                .style("top", function (v, i) {
-                    var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
-                    return result + "px";
-                })
-                .style("border-radius", 2)
-                // .attr("ry", 2)
-                .style("width", itemSize.width + "px")
-                .style("height", itemSize.height + "px")
-                .style("background-color", function (v, i) {
-                    return colorScale(v.topic[0].group);
-                })
-                .on("mouseenter", function (v, i) {
-                    onMouseEnter(v);
-                    d3.event.target.style.stroke = "#66ccff";
-                    d3.select("#float_info").style({
-                        visibility: "visible",
-                        transform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
-                        WebkitTransform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
-                        opacity: 1
-                    });
-                })
-                .on("mouseleave", function (v, i) {
-                    d3.event.target.style.stroke = null;
-                    d3.select("#float_info").style({
-                        visibility: "hidden",
-                        opacity: 0
-                    });
+            // filter topics
+            // for (var i = 0; i < item.topic.length && flag; i++) {
+            //     if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
+            // }
+            // filter corporations
+            // for (var i = 0; i < item.corp.length && flag; i++) {
+            //     if (filter.corporations[item.corp[i]] === undefined) flag = false;
+            // }
+            return flag;
+        }));
+        articleRects.enter()
+            .append("div")
+            .attr("class", "flash")
+            .style("left", function (v, i) {
+                return xScale(new Date(toDateString(new Date(v.time)))) + "px";
+            })
+            .style("top", function (v, i) {
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours() / 2));
+                return result + "px";
+            })
+            .style("border-radius", 2)
+            // .attr("ry", 2)
+            .style("width", itemSize.width + "px")
+            .style("height", itemSize.height + "px")
+            .style("background-color", function (v, i) {
+                return colorScale(v.topic[0].group);
+            })
+            .on("mouseenter", function (v, i) {
+                onMouseEnter(v);
+                d3.event.target.style.stroke = "#66ccff";
+                d3.select("#float_info").style({
+                    visibility: "visible",
+                    transform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    WebkitTransform: "translate(" + d3.event.clientX + "px, " + d3.event.clientY + "px)",
+                    opacity: 1
                 });
-            articleRects.exit().remove();
-        }
+            })
+            .on("mouseleave", function (v, i) {
+                d3.event.target.style.stroke = null;
+                d3.select("#float_info").style({
+                    visibility: "hidden",
+                    opacity: 0
+                });
+            });
+        articleRects.exit().remove();
     }
+}
