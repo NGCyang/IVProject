@@ -34,7 +34,9 @@ var articleSchema = mongoose.Schema({
     firstMention: {
         type: Boolean,
         required: true
-    }
+    },
+    story_id: String,
+    article_type: String
 });
 
 var Articles = mongoose.model('Article', articleSchema, 'articles');

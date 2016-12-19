@@ -39,17 +39,14 @@ var pageloaded = false;
 var load = function () {
     d3.json("/data/all/website", function (error, result) {
         if (error) return console.warn(error);
-        console.log(result);
         for (var i = 0; i < result.length; i++) {
             websiteObjects[result[i]] = null;
-            websites.push[result[i]];
+            websites.push(result[i]);
         }
         d3.json("/data/all/corp", function (error, result) {
             if (error) return console.warn(error);
             for (var i = 0; i < result.length; i++) {
-                for (var j = 0; j < result[i].length; j++) {
-                    corpObjects[result[i][j]] = null;
-                }
+                corpObjects[result[i]] = null;
             }
             for (var corp in corpObjects) {
                 corps.push(corp);
@@ -57,13 +54,12 @@ var load = function () {
             d3.json("/data/all/topic", function (error, result) {
                 if (error) return console.warn(error);
                 for (var i = 0; i < result.length; i++) {
-                    for (var j = 0; j < result[i].length; j++) {
-                        topicObjects[result[i][j].group] = null;
-                    }
+                    topicObjects[result[i].group] = null;
                 }
                 for(var topic in topicObjects){
                     topics.push(topic);
                 }
+                //console.log(websites,corps,topics);
                 initial();
             });
         });
@@ -126,7 +122,7 @@ var initial = function () {
 
     // read websites
     var websiteContext = d3.select("#websiteSelection").append("div");
-    websiteContext.selectAll("div")
+    websiteContext.selectAll("div.item")
         .data(websites)
         .enter()
         .append(function (v, i) {
@@ -144,14 +140,14 @@ var initial = function () {
                     filter.websites.splice(filter.websites.indexOf(event.target.id), 1);
                 }
                 updateData();
-                if (pageloaded) render();
+                //if (pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
             label.setAttribute("for", input.getAttribute("id"));
             div.appendChild(input);
             div.appendChild(label);
-            var test = document.createElement("div");
+            // var test = document.createElement("div");
             return div;
         });
 
@@ -162,22 +158,22 @@ var initial = function () {
         .enter()
         .append(function (v, i) {
             var div = document.createElement("div");
-            div.setAttribute("id", "item_" + v.group);
+            div.setAttribute("id", "item_" + v);
             div.setAttribute("class", "item");
             var input = document.createElement("input");
             input.setAttribute("class", "filled-in");
             input.setAttribute("type", "checkbox");
-            input.setAttribute("id", v.group);
+            input.setAttribute("id", v);
             input.setAttribute("index", i);
             input.onchange = function (event) {
                 if (event.target.checked) {
-                    filter.topics[topics[event.target.getAttribute("index")].group] = null;
+                    filter.topics[topics[event.target.getAttribute("index")]] = null;
                     // var values = topics[event.target.getAttribute("index")].value;
                     // for (var j = 0; j < values.length; j++) {
                     //     filter.topics[topics[event.target.getAttribute("index")].groupname][values[j]] = null;
                     // }
                 } else {
-                    delete filter.topics[topics[event.target.getAttribute("index")].groupname];
+                    delete filter.topics[topics[event.target.getAttribute("index")]];
                 }
                 // var thisGroup = document.getElementById("div_group_" + topics[event.target.getAttribute("index")].groupname);
                 // var typeInputs = thisGroup.getElementsByTagName("input");
@@ -189,10 +185,10 @@ var initial = function () {
                 //         typeInputs[j].checked = false;
                 //     }
                 // }
-                if (pageloaded) render();
+                //if (pageloaded) render();
             };
             var label = document.createElement("label");
-            label.innerText = v.groupname;
+            label.innerText = v;
             label.setAttribute("for", input.getAttribute("id"));
             div.appendChild(input);
             div.appendChild(label);
@@ -259,7 +255,7 @@ var initial = function () {
                 } else {
                     delete filter.corporations[event.target.id];
                 }
-                if (pageloaded) render();
+                //if (pageloaded) render();
             }
             var label = document.createElement("label");
             label.innerText = v;
@@ -269,11 +265,11 @@ var initial = function () {
             var test = document.createElement("div");
             return div;
         });
-    for (var i = 0; i < websites.length; i++) {
-        document.getElementById(websites[i]).click();
-    }
+    // for (var i = 0; i < websites.length; i++) {
+    //     document.getElementById(websites[i]).click();
+    // }
     for (var i = 0; i < topics.length; i++) {
-        document.getElementById(topics[i].groupname).click();
+        document.getElementById(topics[i]).click();
     }
     for (var i = 0; i < corps.length; i++) {
         document.getElementById(corps[i]).click();
@@ -340,7 +336,7 @@ var initial = function () {
 
     // console.log(filter);
     pageloaded = true;
-    render();
+    //render();
 }
 var toDateString = function (date) {
     var year = date.getUTCFullYear();
@@ -363,7 +359,7 @@ var onTimeChange = function (event) {
     } else if (event.target.id == "date_filter_input_to") {
         filter.time.to = date;
     }
-    render();
+    // render();
 }
 
 var onMouseEnter = function (item) {
@@ -494,7 +490,7 @@ var render = function () {
 
             // filter topics
             for (var i = 0; i < item.topic.length && flag; i++) {
-                if (filter.topics[item.topic[i].group] === undefined || filter.topics[item.topic[i].group][item.topic[i].type] === undefined) flag = false;
+                if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
             }
             // filter corporations
             for (var i = 0; i < item.corp.length && flag; i++) {

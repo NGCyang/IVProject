@@ -4,21 +4,32 @@
     <title>ServerTest!</title>
 </head>
 <body>
-<button type="button" onclick="loadItems()">Request items</button>
-
+<button type="button" onclick="loadtopic()">Request items</button>
+<button type="button" onclick="loadcorp()">Request items</button>
 <button type="button" onclick="loadDoc()">Request data</button>
 
 <p id="data"></p>
 
 <script>
-function loadItems() {
+function loadtopic() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("data").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "/data/all/website", true);
+  xhttp.open("GET", "/data/all/topic", true);
+  xhttp.send();
+}
+
+function loadcorp() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("data").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/data/all/corp", true);
   xhttp.send();
 }
 
@@ -29,7 +40,7 @@ function loadDoc() {
       document.getElementById("data").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "/data/website/www.nasdaq.com", true);
+  xhttp.open("GET", "/data/website/nasdaq", true);
   xhttp.send();
 }
 </script>

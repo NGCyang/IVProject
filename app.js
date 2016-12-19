@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var Articles = require('./article');
 
 var hostname = 'localhost';
-var port = 3000;
+var port = 3001;
 
 var app = express();
 var dataRouter;
@@ -27,24 +27,26 @@ db.once('open', function () {
 dataRouter = express.Router();
 dataRouter.use(bodyParser.json());
 
-dataRouter.route('/website/:website')
-.get(function (req, res, next) {
-    Articles.find({'website': req.params.website}, function (err, article) {
+dataRouter.route('/website/:name')
+.get(function (req, res) {
+    Articles.find({'website': req.params.name}, function (err, article) {
         if (err) throw err;
         res.json(article);
-    });
-    
+    });   
 });
-
+/*
+dataRouter.route('/all/topic')
+.get(function (req, res) {
+    res.end();
+});
+*/
 dataRouter.route('/all/:itemName')
-.get(function (req, res, next) {
-
+.get(function (req, res) {
     Articles.distinct(req.params.itemName, function (err, items) {
         if (err) throw err;
         res.json(items);
     });
 });
-
 
 //-----load static index page
 /*
@@ -57,7 +59,6 @@ app.get('/', function(req, res, next) {
 });
 */
 app.use('/data',dataRouter);
-
 app.use(express.static(__dirname));
 
 app.listen(port, hostname, function(){
