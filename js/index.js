@@ -303,7 +303,7 @@ var initial = function () {
         if (websiteObjects[name] !== undefined) {
             var flag = false;
             for (var i in filter.websites) {
-                if(i == name) {
+                if (i == name) {
                     flag = true;
                     break;
                 }
@@ -313,7 +313,7 @@ var initial = function () {
                 newChip.innerHTML = name + "<i class='close material-icons'>close</i>";
                 newChip.className = "chip";
                 websiteChips.appendChild(newChip);
-                $(newChip).on('click.chips-delete', {name}, function(event){
+                $(newChip).on('click.chips-delete', { name }, function (event) {
                     console.log(filter.websites);
                     delete filter.websites[event.data.name];
                     console.log(filter.websites);
@@ -356,12 +356,6 @@ var initial = function () {
 
     // console.log(filter);
     pageloaded = true;
-    setInterval(function(){
-        if(counter == 0){
-            counter --;
-            render();
-        }
-    }, 1000);
     render();
 }
 var toDateString = function (date) {
@@ -373,18 +367,14 @@ var toDateString = function (date) {
     return year + "-" + month + "-" + day;
 }
 
-var counter = -1;
 
-var updateData = function () {
-    counter = 0;
-    for(var website in filter.websites){
-        counter ++;
-        d3.json("/data/website/" + website, function(error, result){
-            if(error) return console.warn(error);
-            data[result[0].website] = result;
-            counter --;
-        })
-    }
+var updateData = function (website) {
+    d3.json("/data/website/" + website, function (error, result) {
+        if (error) return console.warn(error);
+        data[result[0].website] = result;
+        render();
+    })
+
 }
 
 var onTimeChange = function (event) {
@@ -550,7 +540,7 @@ var render = function () {
             .style("width", itemSize.width + "px")
             .style("height", itemSize.height + "px")
             .style("background-color", function (v, i) {
-                return colorScale(v.id);
+                return colorScale(v.topic[0].group);
             })
             .on("mouseenter", function (v, i) {
                 onMouseEnter(v);
