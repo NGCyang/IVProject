@@ -51,19 +51,22 @@ var load = function () {
         //     for (var corp in corpObjects) {
         //         corps.push(corp);
         //     }
-        d3.json("/data/all/topic", function (error, result) {
-            if (error) return console.warn(error);
-            for (var i = 0; i < result.length; i++) {
-                topicObjects[result[i].group] = null;
-            }
-            for (var topic in topicObjects) {
-                topics.push(topic);
-            }
+        // d3.json("/data/all/topic", function (error, result) {
+        //     if (error) return console.warn(error);
+        //     for (var i = 0; i < result.length; i++) {
+        //         topicObjects[result[i].group] = null;
+        //     }
+        //     for (var topic in topicObjects) {
+        //         topics.push(topic);
+        //     }
             //console.log(websites,corps,topics);
             initial();
         });
+    topics = ['Accounting Actions', 'Business Concerns', 'Company Earnings', 'Contracts', 'Corporate Governance',
+                'Criminal Actions', 'Disaster', 'Employment Actions', 'Financing Actions','General Business Actions',
+                'Government','Legal Actions','Mergers and Acquisitions','Product Development','Rumors','Stock Activities'];
         // });
-    });
+    //});
 
 }
 
@@ -526,7 +529,7 @@ var render = function () {
             // }
             return flag;
         }));
-        articleRect.attr("class", "flash")
+        articleRects.attr("class", "flash")
             .style("left", function (v, i) {
                 var dateDisp = (new Date(v.time)).getTime() - filter.time.from.getTime();
                 var result = xScale(Math.floor(dateDisp / unit));
