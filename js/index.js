@@ -10,10 +10,10 @@ var filter = {
     corporations: {}
 }
 
-var websites = ["as", "bs"];
+var websites = [];
 var topics = [];
 var corps = [];
-var websiteObjects = {as: null, bs: null}
+var websiteObjects = {}
 var topicObjects = {};
 var corpObjects = {};
 var minTime = new Date("2016-01-01 00:00:00 UTC");
