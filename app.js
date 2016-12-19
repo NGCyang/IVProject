@@ -23,13 +23,32 @@ db.once('open', function () {
 
 //var collection = db.collection("articles");
 
+/*
+time Query
+db.posts.find( //query today up to tonight
+  {"created_on": {"$gte": new Date(2012, 7, 14), "$lt": new Date(2012, 7, 15)}})
+*/
+
 //------set up router response-----//
 dataRouter = express.Router();
 dataRouter.use(bodyParser.json());
 
+
+dataRouter.route('/website/:name/:startTime/:endTime')
+.get(function (req, res) {
+    Articles.find(
+        {'website': req.params.name,
+            'first_mention': true,
+            "created_on": {"$gte": new Date(req.params.startTime), "$lt": new Date(req.params.endTime)}}, function (err, article) {
+        if (err) throw err;
+        res.json(article);
+    });   
+});
+
+
 dataRouter.route('/website/:name')
 .get(function (req, res) {
-    Articles.find({'website': req.params.name}, function (err, article) {
+    Articles.find({'website': req.params.name, 'first_mention': true}, function (err, article) {
         if (err) throw err;
         res.json(article);
     });   

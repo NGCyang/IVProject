@@ -1,4 +1,4 @@
-var mongoose     = require('mongoose');
+var mongoose = require('mongoose');
 
 //-------Define Schemas-----//
 var topicSchema = mongoose.Schema({
@@ -13,6 +13,9 @@ var topicSchema = mongoose.Schema({
 });
 
 var articleSchema = mongoose.Schema({
+    _id: {
+        type: String
+    },
     website: {
         type: String,
         required: true
@@ -31,7 +34,7 @@ var articleSchema = mongoose.Schema({
         required: true
     },
     topic: [topicSchema],
-    firstMention: {
+    first_mention: {
         type: Boolean,
         required: true
     },
