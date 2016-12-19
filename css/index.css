@@ -79,10 +79,10 @@ html, body{
     height: 25%;
     z-index: 10;
 }
-.middle .middle-bottom-block .block-content{
+.block-content{
     padding-left: 20px;
     overflow: auto;
-    height: 65%;
+    height: 100%;
 }
 div.websiteRect{
     position: absolute;
@@ -124,12 +124,12 @@ div.websiteSVG{
     box-sizing: border-box;
     width: 20%;
     height: 100%;
+    border-left: 1px solid #b5b5b5;
 }
 .right .right-block{
     padding: 5px;
     width: 100%;
     height: 40%;
-    border-left: 1px solid #b5b5b5;
     overflow-y: auto;
 }
 .float-info{
