@@ -80,7 +80,7 @@ html, body{
     z-index: 10;
 }
 .block-content{
-    padding-left: 20px;
+    padding-left: 10px;
     overflow: auto;
     height: 100%;
 }
@@ -160,7 +160,7 @@ div.websiteSVG{
     transition: background-color 0.3s;
     background-color: #ffffff;
     width: 100%;
-    
+    
 }
 .clearframe{
     clear: both;

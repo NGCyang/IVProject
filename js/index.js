@@ -196,6 +196,7 @@ var initial = function () {
             var label = document.createElement("label");
             label.innerText = v;
             label.setAttribute("for", input.getAttribute("id"));
+            label.setAttribute("style", "color: " + colorScale(v));
             div.appendChild(input);
             div.appendChild(label);
 
@@ -275,7 +276,6 @@ var initial = function () {
     //     document.getElementById(websites[i]).click();
     // }
     for (var i = 0; i < topics.length; i++) {
-        colorScale(topics[i].group);
         document.getElementById(topics[i]).click();
     }
     // for (var i = 0; i < corps.length; i++) {
