@@ -381,7 +381,7 @@ var updateData = function () {
         counter ++;
         d3.json("/data/website/" + website, function(error, result){
             if(error) return console.warn(error);
-            data[result.website] = result;
+            data[result[0].website] = result;
             counter --;
         })
     }
@@ -415,7 +415,7 @@ var onMouseEnter = function (item) {
         wrapper.appendChild(corp);
     }
     var time = document.createElement("div");
-    time.innerHTML = "Time: " + (new Date(item.time["$date"])).toUTCString();
+    time.innerHTML = "Time: " + (new Date(item.time)).toUTCString();
     wrapper.appendChild(time);
     floatInfo.replaceChild(wrapper, floatInfo.children[0]);
 }
@@ -539,10 +539,10 @@ var render = function () {
             .append("div")
             .attr("class", "flash")
             .style("left", function (v, i) {
-                return xScale(new Date(toDateString(new Date(v.time["$date"])))) + "px";
+                return xScale(new Date(toDateString(new Date(v.time)))) + "px";
             })
             .style("top", function (v, i) {
-                var result = yScale(Math.floor((new Date(v.time["$date"])).getUTCHours()));
+                var result = yScale(Math.floor((new Date(v.time)).getUTCHours()));
                 return result + "px";
             })
             .style("border-radius", 2)
