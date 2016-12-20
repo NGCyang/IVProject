@@ -9,7 +9,7 @@ var port = 3001;
 
 var app = express();
 var dataRouter;
-var url = 'mongodb://localhost:27017/news';
+var url = 'mongodb://localhost:27017/newsv2';
 var db;
 
 //-----connect to MongoDB---------//

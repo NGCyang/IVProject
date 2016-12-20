@@ -524,9 +524,10 @@ var render = function () {
             if (new Date(item.time) > filter.time.to || new Date(item.time) < filter.time.from) flag = false;
 
             // filter topics
-            // for (var i = 0; i < item.topic.length && flag; i++) {
-            //     if (filter.topics[item.topic[i]] === undefined || filter.topics[item.topic[i]][item.topic[i].type] === undefined) flag = false;
-            // }
+            for (var i = 0; i < item.topic.length && flag; i++) {
+                // console.log(item.topic[i]);
+                if (filter.topics[item.topic[i].group] === undefined) flag = false;
+            }
             // filter corporations
             // for (var i = 0; i < item.corp.length && flag; i++) {
             //     if (filter.corporations[item.corp[i]] === undefined) flag = false;
