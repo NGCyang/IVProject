@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var Articles = require('./article');
 
 var hostname = 'localhost';
-var port = 12345;
+var port = 80;
 
 var app = express();
 var dataRouter;
