@@ -10,7 +10,7 @@ var port = 3001;
 var app = express();
 var dataRouter;
 // var url = 'mongodb://localhost:27017/newsv2';
-url = 'mongodb://infovis:YIdFUZMcbnUZZAGZvOcvTCdgqSrJbTUYQPSWwklKtzVMDAv6SEFKkGtmoK1CGNG1iN1Rpi6YMWgSQFaJ1YSS5g==@infovis.documents.azure.com:10250/?ssl=true';
+var url = 'mongodb://infovis:YIdFUZMcbnUZZAGZvOcvTCdgqSrJbTUYQPSWwklKtzVMDAv6SEFKkGtmoK1CGNG1iN1Rpi6YMWgSQFaJ1YSS5g==@infovis.documents.azure.com:10250/?ssl=true';
 var db;
 
 //-----connect to MongoDB---------//
