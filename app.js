@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 var Articles = require('./article');
 
-var hostname = '127.0.0.1';
+var hostname = 'localhost';
 var port = 12345;
 
 var app = express();
