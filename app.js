@@ -69,15 +69,13 @@ dataRouter.route('/all/:itemName')
 });
 
 //-----load static index page
-/*
+
 app.get('/', function(req, res, next) {
     console.log('Router Succeed!')
-    console.log('Redirect to test.html!')
-    next()
-}, function(req, res) {
-    res.sendFile(req.url, {root: __dirname });
+    console.log('Redirect to index.html!')
+    res.sendFile(__dirname + "/" + "index.html");
 });
-*/
+
 app.use('/data',dataRouter);
 app.use(express.static(__dirname));
 
