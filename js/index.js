@@ -421,7 +421,7 @@ var render = function () {
     var xScale = d3.scale.linear().range([0, chartWidth - chartMargin.left - chartMargin.right - 30]);
     xScale.domain([0, 59]);
     var unit = (filter.time.to.getTime() - filter.time.from.getTime()) / 60;
-    console.log(filter);
+    //console.log(filter);
     var yScale = d3.scale.linear().range([chartHeight / 5 - chartMargin.top - chartMargin.bottom - 20, 0]);
     yScale.domain([0, 11]);
 

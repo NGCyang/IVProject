@@ -22,14 +22,6 @@ db.once('open', function () {
     console.log("Connected correctly to MongoDB");
 });
 
-//var collection = db.collection("articles");
-
-/*
-time Query
-db.posts.find( //query today up to tonight
-  {"created_on": {"$gte": new Date(2012, 7, 14), "$lt": new Date(2012, 7, 15)}})
-*/
-
 //------set up router response-----//
 app.use(express.static(__dirname));
 
@@ -54,12 +46,7 @@ dataRouter.route('/website/:name')
         res.json(article);
     });   
 });
-/*
-dataRouter.route('/all/topic')
-.get(function (req, res) {
-    res.end();
-});
-*/
+
 dataRouter.route('/all/:itemName')
 .get(function (req, res) {
     Articles.distinct(req.params.itemName, function (err, items) {
@@ -67,15 +54,7 @@ dataRouter.route('/all/:itemName')
         res.json(items);
     });
 });
-/*
-dataRouter.route('/count')
-.get(function (req, res) {
-    Articles.count({}, function (err, count) {
-        if (err) throw err;
-        console.log("Number of docs: ", count);
-    });  
-});
-*/
+
 //-----load static index page
 
 app.get('/', function(req, res, next) {
