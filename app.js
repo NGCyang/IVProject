@@ -87,7 +87,7 @@ app.get('/', function(req, res, next) {
 app.use('/data',dataRouter);
 
 app.listen(port, hostname, function(){
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log('Server running');
 });
 // app.listen(port, function(){
 //   console.log(`Server running at http://${hostname}:${port}/`);
