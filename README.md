@@ -6,7 +6,7 @@
 http://news.heiseric.com/
 
 ##Demo Video
-
+https://vimeo.com/196909864
 
 ##Description
 This project provides a visualization of news reports for various websites monitored by Accern.
