@@ -3,7 +3,7 @@
 ####Authors: Xiaoyan Wang, Meng Yang, Ze He
 
 ##Demo Link
-http://35.166.197.255/
+http://news.heiseric.com/
 
 ##Demo Video
 
