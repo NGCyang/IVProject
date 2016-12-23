@@ -1,5 +1,5 @@
 # IVProject
-![This is preview](http://ss)
+![This is preview](https://github.com/miniwangdali/IVProject/blob/master/preview.png)
 ####Authors: Xiaoyan Wang, Meng Yang, Ze He
 
 ##Demo Link
