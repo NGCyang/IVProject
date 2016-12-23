@@ -8,9 +8,6 @@ http://news.heiseric.com/
 ##Demo Video
 https://vimeo.com/196909864
 
-<iframe src="https://player.vimeo.com/video/196909864" width="1152" height="720" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p><a href="https://vimeo.com/196909864">news visualizing demo</a> from <a href="https://vimeo.com/user60664373">Meng Yang</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
-
 ## Description
 This project provides a visualization of news reports for various websites monitored by Accern.
 
