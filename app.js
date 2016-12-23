@@ -4,13 +4,13 @@ var mongoose = require('mongoose');
 
 var Articles = require('./article');
 
-var hostname = 'localhost';
-var port = 12345;
+var hostname = '127.0.0.1';
+var port = 3000;
 
 var app = express();
 var dataRouter;
-//var url = 'mongodb://localhost:27017/newsv2';
-var url = 'mongodb://infovis:YIdFUZMcbnUZZAGZvOcvTCdgqSrJbTUYQPSWwklKtzVMDAv6SEFKkGtmoK1CGNG1iN1Rpi6YMWgSQFaJ1YSS5g==@infovis.documents.azure.com:10250/news/?ssl=true';
+var url = 'mongodb://localhost:27017/news';
+//var url = 'mongodb://infovis:YIdFUZMcbnUZZAGZvOcvTCdgqSrJbTUYQPSWwklKtzVMDAv6SEFKkGtmoK1CGNG1iN1Rpi6YMWgSQFaJ1YSS5g==@infovis.documents.azure.com:10250/news_v2/?ssl=true';
 var db;
 
 //-----connect to MongoDB---------//
@@ -51,7 +51,6 @@ dataRouter.route('/website/:name')
 .get(function (req, res) {
     Articles.find({'website': req.params.name, 'first_mention': true}, function (err, article) {
         if (err) throw err;
-        console.log(req.url);
         res.json(article);
     });   
 });
@@ -65,7 +64,6 @@ dataRouter.route('/all/:itemName')
 .get(function (req, res) {
     Articles.distinct(req.params.itemName, function (err, items) {
         if (err) throw err;
-        console.log(req.url);
         res.json(items);
     });
 });
