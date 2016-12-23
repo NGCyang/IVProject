@@ -33,3 +33,5 @@ Before runing this project, make sure following dependences are in your environm
 3. Python 2.7
 
 ## Final Report
+
+https://github.com/miniwangdali/IVProject/blob/master/VisualizingNewsReport-FinalReport.pdf
